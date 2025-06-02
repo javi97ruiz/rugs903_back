@@ -1,0 +1,10 @@
+package dev.javi.rugs_903_back.dto
+
+data class ClientDto(
+    val id: Long,
+    val addressId: Long,
+    val phoneNumber: String,
+    val name: String,
+    val surname: String,
+    val userId: Long
+)

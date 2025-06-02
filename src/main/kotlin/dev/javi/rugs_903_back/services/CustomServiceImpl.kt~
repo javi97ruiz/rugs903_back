@@ -1,0 +1,4 @@
+package dev.javi.rugs_903_back.services
+
+interface CustomServiceImpl {
+}

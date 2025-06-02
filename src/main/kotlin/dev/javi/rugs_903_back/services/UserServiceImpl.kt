@@ -1,0 +1,59 @@
+package dev.javi.rugs_903_back.services
+
+import dev.javi.rugs_903_back.dto.UserUpdateRequest
+import dev.javi.rugs_903_back.models.User
+import dev.javi.rugs_903_back.repositories.UserRepository
+import org.springframework.security.core.userdetails.UsernameNotFoundException
+import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.stereotype.Service
+import java.time.LocalDateTime
+
+@Service
+class UserServiceImpl(
+    private val userRepository: UserRepository,
+    private val passwordEncoder: PasswordEncoder
+): UserService   {
+
+
+    override fun getAll(): List<User> {
+        return userRepository.findAll()
+    }
+
+    override fun getById(id: Long): User? {
+        return userRepository.findById(id).orElse(null)
+    }
+
+    override fun create(user: User): User {
+        return userRepository.save(user)
+    }
+
+    override fun deleteById(id: Long) {
+        userRepository.deleteById(id)
+    }
+
+    override fun update(id: Long, user: User): User? {
+        return userRepository.findById(id).map { existingUser ->
+            val updatedUser = existingUser.copy(username = user.username, password = user.password)
+            userRepository.save(updatedUser)
+        }.orElse(null)
+    }
+
+    override fun getByUsername(username: String): User? {
+        return userRepository.findByUsername(username)
+    }
+
+    override fun updateByUsername(username: String, dto: UserUpdateRequest): User {
+        val existingUser = userRepository.findByUsername(username)
+            ?: throw UsernameNotFoundException("Usuario no encontrado")
+
+        val updatedUser = existingUser.copy(
+            username = dto.username,
+            password = if (dto.password.isNullOrBlank()) existingUser.password
+            else passwordEncoder.encode(dto.password),
+            updatedAt = LocalDateTime.now()
+        )
+
+        return userRepository.save(updatedUser)
+    }
+
+}
