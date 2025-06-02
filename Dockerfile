@@ -1,25 +1,23 @@
-# Usa una imagen JDK como base
-FROM eclipse-temurin:21-jdk-alpine as build
+# Usa imagen oficial de OpenJDK con Gradle
+FROM gradle:8.5-jdk21 AS builder
 
-# Directorio de trabajo
+# Copia el proyecto
+COPY --chown=gradle:gradle . /app
 WORKDIR /app
 
-# Copiar archivos de build
-COPY . .
+# Compila el proyecto
+RUN gradle build -x test
 
-# Construye el jar con Gradle
-RUN ./gradlew clean bootJar
-
-# Imagen final minimalista
-FROM eclipse-temurin:21-jre-alpine
+# Nueva imagen con solo JDK para correr el jar
+FROM eclipse-temurin:21-jdk
 
 WORKDIR /app
 
-# Copiar el jar desde la fase anterior
-COPY --from=build /app/build/libs/*.jar app.jar
+# Copia el jar generado
+COPY --from=builder /app/build/libs/*.jar app.jar
 
-# Exponer el puerto
+# Puerto que usará Render (Render expone por defecto el 10000)
 EXPOSE 8080
 
-# Ejecutar la app
+# Ejecuta el backend
 ENTRYPOINT ["java", "-jar", "app.jar"]
