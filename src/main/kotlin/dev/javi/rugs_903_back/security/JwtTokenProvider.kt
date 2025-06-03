@@ -16,7 +16,7 @@ class JwtTokenProvider {
     fun generateToken(username: String, role: String): String {
         return JWT.create()
             .withSubject(username)
-            .withClaim("role", role)
+            .withClaim("role", "ROLE_${role.uppercase()}")
             .withIssuedAt(Date())
             .withExpiresAt(Date(System.currentTimeMillis() + expirationMs))
             .sign(algorithm)

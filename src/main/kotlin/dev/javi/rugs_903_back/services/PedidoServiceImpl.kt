@@ -1,6 +1,7 @@
 package dev.javi.rugs_903_back.services
 
 import dev.javi.rugs_903_back.dto.PedidoRequestDto
+import dev.javi.rugs_903_back.exceptions.UserException
 import dev.javi.rugs_903_back.models.Pedido
 import dev.javi.rugs_903_back.repositories.ClientRepository
 import dev.javi.rugs_903_back.repositories.PedidosRepository
@@ -49,4 +50,12 @@ class PedidoServiceImpl(
 
     override fun findByClienteId(clienteId: Long): List<Pedido> =
         pedidosRepository.findAll().filter { it.clienteId == clienteId }
+
+    override fun findByUsername(username: String): List<Pedido> {
+        val client = clientRepository.findByUserUsername(username)
+            ?: throw UserException.UsernameNotFoundException("Cliente no encontrado para $username")
+
+        return pedidosRepository.findAll()
+            .filter { it.clienteId == client.id }
+    }
 }

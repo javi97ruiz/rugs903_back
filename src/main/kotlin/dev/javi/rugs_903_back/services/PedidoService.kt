@@ -9,4 +9,6 @@ interface PedidoService {
     fun save(dto: PedidoRequestDto): Pedido
     fun deleteById(id: Long)
     fun findByClienteId(clienteId: Long): List<Pedido>
+    fun findByUsername(username: String): List<Pedido>
+
 }

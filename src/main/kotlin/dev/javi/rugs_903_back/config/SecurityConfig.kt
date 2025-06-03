@@ -16,6 +16,9 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @Configuration
 class SecurityConfig(
@@ -24,19 +27,37 @@ class SecurityConfig(
 ) {
 
     @Bean
-    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+    fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http
-            .csrf { csrf -> csrf.disable() }
+            .csrf { it.disable() }
+            .cors {  }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests {
                 it
-                    .requestMatchers(AntPathRequestMatcher("/auth/**")).permitAll()
-                    .anyRequest().authenticated()
+                    .requestMatchers("/auth/**").permitAll() // públicas
+                    .requestMatchers("/users/**").hasRole("ADMIN") // solo admin
+                    .requestMatchers("/pedidos").hasRole("ADMIN") // lista completa de pedidos solo admin
+                    .requestMatchers("/pedidos/mis-pedidos").hasAnyRole("USER", "ADMIN") // pedidos personales
+                    .requestMatchers("/clients/**").authenticated() // protegida, cualquier autenticado
+                    .requestMatchers("/products/**", "/custom-products/**").permitAll() // pública
+                    .anyRequest().authenticated() // el resto requiere autenticación
             }
-            .authenticationProvider(authenticationProvider())
             .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter::class.java)
 
         return http.build()
+    }
+
+    @Bean
+    fun corsConfigurationSource(): CorsConfigurationSource {
+        val configuration = CorsConfiguration()
+        configuration.allowedOrigins = listOf("https://rugs903-front.onrender.com") // 🟢 Cambia por tu URL real del frontend
+        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
+        configuration.allowedHeaders = listOf("Authorization", "Content-Type")
+        configuration.allowCredentials = true
+
+        val source = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", configuration)
+        return source
     }
 
 

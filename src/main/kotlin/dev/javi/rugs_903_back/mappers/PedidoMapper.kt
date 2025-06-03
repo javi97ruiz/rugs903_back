@@ -17,3 +17,7 @@ fun Pedido.toResponse(): PedidoResponseDto {
         fecha = fecha
     )
 }
+
+fun List<Pedido>.toResponseList(): List<PedidoResponseDto> {
+    return this.map { it.toResponse() }
+}

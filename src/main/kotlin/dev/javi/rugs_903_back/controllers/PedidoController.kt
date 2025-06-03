@@ -3,8 +3,10 @@ package dev.javi.rugs_903_back.controllers
 import dev.javi.rugs_903_back.dto.PedidoRequestDto
 import dev.javi.rugs_903_back.dto.PedidoResponseDto
 import dev.javi.rugs_903_back.mappers.toResponse
+import dev.javi.rugs_903_back.mappers.toResponseList
 import dev.javi.rugs_903_back.services.PedidoService
 import org.springframework.http.HttpStatus
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 
@@ -38,5 +40,11 @@ class PedidoController(
     @GetMapping("/cliente/{clienteId}")
     fun getPedidosByCliente(@PathVariable clienteId: Long): List<PedidoResponseDto> {
         return pedidoService.findByClienteId(clienteId).map { it.toResponse() }
+    }
+
+    @GetMapping("/me")
+    fun getMyPedidos(authentication: Authentication): List<PedidoResponseDto> {
+        val username = authentication.name
+        return pedidoService.findByUsername(username).toResponseList()
     }
 }
