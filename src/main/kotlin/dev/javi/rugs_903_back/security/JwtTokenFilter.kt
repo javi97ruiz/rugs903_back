@@ -18,8 +18,11 @@ class JwtTokenFilter(
 
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
         val path = request.servletPath
-        return path.startsWith("/auth")
+        val ignored = path.startsWith("/auth") || path.startsWith("/error") || path == "/"
+        println("🛑 JwtTokenFilter shouldNotFilter para: $path -> $ignored")
+        return ignored
     }
+
 
     override fun doFilterInternal(
         request: HttpServletRequest,

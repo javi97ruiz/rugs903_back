@@ -35,14 +35,14 @@ class SecurityConfig(
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests {
                 it
-                    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // 🟢 Añade esta línea
-                    .requestMatchers("/auth/**").permitAll() // públicas
-                    .requestMatchers("/users/**").hasRole("ADMIN") // solo admin
-                    .requestMatchers("/pedidos").hasRole("ADMIN") // lista completa de pedidos solo admin
-                    .requestMatchers("/pedidos/mis-pedidos").hasAnyRole("USER", "ADMIN") // pedidos personales
-                    .requestMatchers("/clients/**").authenticated() // protegida, cualquier autenticado
-                    .requestMatchers("/products/**", "/custom-products/**").permitAll() // pública
-                    .anyRequest().authenticated() // el resto requiere autenticación
+                    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Preflight CORS
+                    .requestMatchers("/auth/**").permitAll()                // Públicas
+                    .requestMatchers("/users/**").hasRole("ADMIN")
+                    .requestMatchers("/pedidos").hasRole("ADMIN")
+                    .requestMatchers("/pedidos/mis-pedidos").hasAnyRole("USER", "ADMIN")
+                    .requestMatchers("/clients/**").authenticated()
+                    .requestMatchers("/products/**", "/custom-products/**").permitAll()
+                    .anyRequest().authenticated()
             }
             .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter::class.java)
 
@@ -52,15 +52,11 @@ class SecurityConfig(
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration().apply {
-            //allowedOriginPatterns = listOf("https://rugs903-front.onrender.com")
-            //allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
-            //allowedHeaders = listOf("Authorization", "Content-Type")
-            exposedHeaders = listOf("Authorization") // <-- expone cabecera para lectura (opcional pero recomendable)
-            allowCredentials = true
+            allowedOriginPatterns = listOf("*")
             allowedMethods = listOf("*")
             allowedHeaders = listOf("*")
-            allowedOriginPatterns = listOf("*") // prueba así temporalmente
-
+            exposedHeaders = listOf("Authorization")
+            allowCredentials = true
         }
 
         val source = UrlBasedCorsConfigurationSource()
