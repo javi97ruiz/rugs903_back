@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: rugs_903_back
+    env: java
+    buildCommand: "./gradlew clean bootJar"
+    startCommand: "java -jar build/libs/app.jar"
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        fromEnvVar: SPRING_DATASOURCE_URL
+      - key: SPRING_DATASOURCE_USERNAME
+        fromEnvVar: SPRING_DATASOURCE_USERNAME
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromEnvVar: SPRING_DATASOURCE_PASSWORD
