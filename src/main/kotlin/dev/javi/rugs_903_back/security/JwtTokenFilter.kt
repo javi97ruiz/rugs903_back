@@ -16,6 +16,11 @@ class JwtTokenFilter(
     private val userDetailsService: CustomUserDetailsService
 ) : OncePerRequestFilter() {
 
+    override fun shouldNotFilter(request: HttpServletRequest): Boolean {
+        val path = request.servletPath
+        return path.startsWith("/auth")
+    }
+
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -23,13 +28,7 @@ class JwtTokenFilter(
     ) {
         val token = getTokenFromRequest(request)
 
-        // 🟢 Si no hay token, deja pasar la petición sin intentar autenticar
-        if (token == null) {
-            filterChain.doFilter(request, response)
-            return
-        }
-
-        if (jwtTokenProvider.isTokenValid(token)) {
+        if (token != null && jwtTokenProvider.isTokenValid(token)) {
             val username = jwtTokenProvider.getUsernameFromToken(token)
             val userDetails = userDetailsService.loadUserByUsername(username)
 
@@ -44,7 +43,6 @@ class JwtTokenFilter(
         filterChain.doFilter(request, response)
     }
 
-
     private fun getTokenFromRequest(request: HttpServletRequest): String? {
         val bearer = request.getHeader("Authorization")
         return if (bearer != null && bearer.startsWith("Bearer ")) {
@@ -52,3 +50,4 @@ class JwtTokenFilter(
         } else null
     }
 }
+
