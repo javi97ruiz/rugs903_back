@@ -23,6 +23,14 @@ class DataInitializer (
         pedidoRepo: PedidosRepository
     ) = CommandLineRunner {
 
+        // 🔄 Fuerza reinicialización
+        userRepo.deleteAll()
+        direccionRepo.deleteAll()
+        clientRepo.deleteAll()
+        productoRepo.deleteAll()
+        customProductRepo.deleteAll()
+        pedidoRepo.deleteAll()
+
         if (userRepo.count() == 0L) {
             // Usuarios
             val admin = userRepo.save(User(
