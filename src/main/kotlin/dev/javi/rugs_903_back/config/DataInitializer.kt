@@ -41,9 +41,9 @@ class DataInitializer (
                 rol = "admin"
             ))
 
-            val user1 = userRepo.save(User(1, "javi1", "pass1", LocalDateTime.now(), LocalDateTime.now(), rol = "usuario"))
-            val user2 = userRepo.save(User(2, "javi2", "pass2", LocalDateTime.now(), LocalDateTime.now(), rol = "usuario"))
-            val user3 = userRepo.save(User(3, "javi3", "pass3", LocalDateTime.now(), LocalDateTime.now(), rol = "usuario"))
+            val user1 = userRepo.save(User(2, "javi1", "pass1", LocalDateTime.now(), LocalDateTime.now(), rol = "usuario"))
+            val user2 = userRepo.save(User(3, "javi2", "pass2", LocalDateTime.now(), LocalDateTime.now(), rol = "usuario"))
+            val user3 = userRepo.save(User(4, "javi3", "pass3", LocalDateTime.now(), LocalDateTime.now(), rol = "usuario"))
 
             // Direcciones
             val direccion1 = direccionRepo.save(Direccion(
