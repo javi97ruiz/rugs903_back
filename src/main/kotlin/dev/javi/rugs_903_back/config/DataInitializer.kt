@@ -5,10 +5,13 @@ import dev.javi.rugs_903_back.repositories.*
 import org.springframework.boot.CommandLineRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.crypto.password.PasswordEncoder
 import java.time.LocalDateTime
 
 @Configuration
-class DataInitializer {
+class DataInitializer (
+    private val passwordEncoder: PasswordEncoder
+){
 
     @Bean
     fun initData(
@@ -24,7 +27,7 @@ class DataInitializer {
             // Usuarios
             val admin = userRepo.save(User(
                 username = "admin",
-                password = "adminpass",
+                password = passwordEncoder.encode("adminpass"),
                 createdAt = LocalDateTime.now(),
                 updatedAt = LocalDateTime.now(),
                 rol = "admin"
