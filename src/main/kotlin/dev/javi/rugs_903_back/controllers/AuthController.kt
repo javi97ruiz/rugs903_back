@@ -23,9 +23,14 @@ class AuthController(
 ) {
 
     @PostMapping("/login")
-    fun login(@RequestBody loginRequest: LoginRequest): ResponseEntity<JwtResponse> {
-        val response = authService.login(loginRequest)
-        return ResponseEntity.ok(response)
+    fun login(@RequestBody loginRequest: LoginRequest): ResponseEntity<Any> {
+        return try {
+            val response = authService.login(loginRequest)
+            ResponseEntity.ok(response)
+        } catch (e: Exception) {
+            e.printStackTrace() // 🔴 para Render logs
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales inválidas o error interno: ${e.message}")
+        }
     }
 
     @PostMapping("/register")
