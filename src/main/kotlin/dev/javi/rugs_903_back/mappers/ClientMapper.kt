@@ -1,8 +1,6 @@
-// mappers/ClientMapper.kt
 package dev.javi.rugs_903_back.mappers
 
-import dev.javi.rugs_903_back.dto.ClientRequestDto
-import dev.javi.rugs_903_back.dto.ClientResponseDto
+import dev.javi.rugs_903_back.dto.*
 import dev.javi.rugs_903_back.models.Client
 import dev.javi.rugs_903_back.models.Direccion
 import dev.javi.rugs_903_back.models.User
@@ -16,8 +14,17 @@ fun Client.toResponseDto() = ClientResponseDto(
     addressId = address.id
 )
 
+fun Client.toFullResponseDto() = ClientResponseFullDto(
+    id = id,
+    name = name,
+    surname = surname,
+    phoneNumber = phoneNumber,
+    user = user.toResponseDto(),
+    address = address.toResponseDto()
+)
+
 fun ClientRequestDto.toModel(user: User, direccion: Direccion) = Client(
-    id = 0, // al crear es 0
+    id = userId, // o id si estás actualizando
     phoneNumber = phoneNumber,
     name = name,
     surname = surname,

@@ -28,9 +28,8 @@ class ClientServiceImpl(
         clientRepository.deleteById(id)
     }
 
-    fun getByUserId(userId: Long): Client? {
-        return clientRepository.findAll().find { it.user.id == userId }
+    override fun getByUsername(username: String): Client? {
+        return clientRepository.findByUserUsername(username)
     }
-
 
 }

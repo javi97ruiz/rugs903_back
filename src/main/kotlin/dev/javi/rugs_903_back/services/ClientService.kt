@@ -8,4 +8,6 @@ interface ClientService {
     public fun save(client: Client): Client
     public fun update(client: Client): Client?
     public fun deleteById(id: Long)
+    fun getByUsername(username: String): Client?
+
 }

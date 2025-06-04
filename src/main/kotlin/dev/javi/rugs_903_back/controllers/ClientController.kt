@@ -2,14 +2,17 @@ package dev.javi.rugs_903_back.controllers
 
 import dev.javi.rugs_903_back.dto.ClientRequestDto
 import dev.javi.rugs_903_back.dto.ClientResponseDto
+import dev.javi.rugs_903_back.dto.ClientResponseFullDto
+import dev.javi.rugs_903_back.mappers.toFullResponseDto
 import dev.javi.rugs_903_back.mappers.toModel
 import dev.javi.rugs_903_back.mappers.toResponseDto
-import dev.javi.rugs_903_back.services.ClientService
-import dev.javi.rugs_903_back.repositories.UserRepository
 import dev.javi.rugs_903_back.repositories.DireccionRepository
+import dev.javi.rugs_903_back.repositories.UserRepository
+import dev.javi.rugs_903_back.services.ClientService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
+import java.security.Principal
 
 @RestController
 @RequestMapping("/clients")
@@ -61,5 +64,13 @@ class ClientController(
     @DeleteMapping("/{id}")
     fun deleteClient(@PathVariable id: Long) {
         clientService.deleteById(id)
+    }
+
+    // Nuevo endpoint para obtener los datos completos del cliente autenticado
+    @GetMapping("/me")
+    fun getCurrentClient(principal: Principal): ClientResponseFullDto {
+        val client = clientService.getByUsername(principal.name)
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente no encontrado")
+        return client.toFullResponseDto()
     }
 }

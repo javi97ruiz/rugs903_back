@@ -1,12 +1,10 @@
-// dto/ClientResponseDto.kt
 package dev.javi.rugs_903_back.dto
 
-data class ClientResponseDto(
+data class ClientResponseFullDto(
     val id: Long,
     val name: String,
     val surname: String,
     val phoneNumber: String,
-    val userId: Long,
-    val addressId: Long
+    val user: UserResponseDto,
+    val address: DireccionDto
 )
-
