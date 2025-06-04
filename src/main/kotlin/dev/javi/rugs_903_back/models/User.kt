@@ -33,6 +33,6 @@ data class User(
     val isActive: Boolean = true,
 
     @Column(nullable = false)
-    val rol: String // "usuario" o "admin"
+    val rol: String // "user" o "admin"
 
 )

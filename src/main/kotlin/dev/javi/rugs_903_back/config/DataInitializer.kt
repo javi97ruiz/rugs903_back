@@ -51,7 +51,7 @@ class DataInitializer(
                     createdAt = LocalDateTime.now(),
                     updatedAt = LocalDateTime.now(),
                     isActive = true,
-                    rol = "usuario"
+                    rol = "user"
                 )
             )
             val user2 = userRepo.save(
@@ -62,7 +62,7 @@ class DataInitializer(
                     createdAt = LocalDateTime.now(),
                     updatedAt = LocalDateTime.now(),
                     isActive = true,
-                    rol = "usuario"
+                    rol = "user"
                 )
             )
             val user3 = userRepo.save(
@@ -73,7 +73,7 @@ class DataInitializer(
                     createdAt = LocalDateTime.now(),
                     updatedAt = LocalDateTime.now(),
                     isActive = true,
-                    rol = "usuario"
+                    rol = "user"
                 )
             )
 
