@@ -52,7 +52,7 @@ class SecurityConfig(
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration().apply {
-            allowedOriginPatterns = listOf("*")
+            allowedOriginPatterns = listOf("https://rugs903-front.onrender.com")
             allowedMethods = listOf("*")
             allowedHeaders = listOf("*")
             exposedHeaders = listOf("Authorization")
@@ -63,6 +63,7 @@ class SecurityConfig(
         source.registerCorsConfiguration("/**", configuration)
         return source
     }
+
 
 
 
