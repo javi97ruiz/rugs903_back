@@ -23,7 +23,13 @@ class JwtTokenFilter(
     ) {
         val token = getTokenFromRequest(request)
 
-        if (token != null && jwtTokenProvider.isTokenValid(token)) {
+        // 🟢 Si no hay token, deja pasar la petición sin intentar autenticar
+        if (token == null) {
+            filterChain.doFilter(request, response)
+            return
+        }
+
+        if (jwtTokenProvider.isTokenValid(token)) {
             val username = jwtTokenProvider.getUsernameFromToken(token)
             val userDetails = userDetailsService.loadUserByUsername(username)
 
@@ -37,6 +43,7 @@ class JwtTokenFilter(
 
         filterChain.doFilter(request, response)
     }
+
 
     private fun getTokenFromRequest(request: HttpServletRequest): String? {
         val bearer = request.getHeader("Authorization")
