@@ -35,14 +35,16 @@ class SecurityConfig(
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests {
                 it
-                    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Preflight CORS
-                    .requestMatchers("/auth/**").permitAll()                // Públicas
-                    .requestMatchers("/users/**").hasRole("ADMIN")
-                    .requestMatchers("/pedidos").hasRole("ADMIN")
-                    .requestMatchers("/pedidos/mis-pedidos").hasAnyRole("USER", "ADMIN")
+                    .requestMatchers("/auth/**").permitAll()
+                    .requestMatchers("/users/me", "/users/me/**").hasAnyRole("USER", "ADMIN")
+                    .requestMatchers("/users/admin", "/users/admin/**").hasRole("ADMIN")
+                    .requestMatchers("/pedidos/me", "/pedidos/me/**").hasAnyRole("USER", "ADMIN")
+                    .requestMatchers("/pedidos/admin", "/pedidos/admin/**").hasRole("ADMIN")
+                    .requestMatchers("/pedidos", "/pedidos/**").hasRole("ADMIN")
                     .requestMatchers("/clients/**").authenticated()
                     .requestMatchers("/products/**", "/custom-products/**").permitAll()
                     .anyRequest().authenticated()
+
             }
             .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter::class.java)
 

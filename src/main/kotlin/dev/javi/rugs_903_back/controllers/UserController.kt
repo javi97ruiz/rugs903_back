@@ -24,9 +24,26 @@ class UserController(
     private val userService: UserService
 ) {
 
-    @GetMapping
+    @GetMapping("/admin")
     fun getAllUsers(): List<UserResponseDto> =
         userService.getAll().map { it.toResponseDto() }
+
+    @GetMapping("/me")
+    fun getMyProfile(principal: Principal): UserResponseDto {
+        val user = userService.getByUsername(principal.name)
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado")
+        return user.toResponseDto()
+    }
+
+    @PutMapping("/me")
+    fun updateCurrentUser(
+        @RequestBody dto: UserUpdateRequest,
+        authentication: Authentication
+    ): UserResponseDto {
+        val currentUsername = authentication.name
+        val user = userService.updateByUsername(currentUsername, dto)
+        return user.toResponseDto()
+    }
 
     @GetMapping("/{id}")
     fun getUserById(@PathVariable id: Long): UserResponseDto =
@@ -46,23 +63,5 @@ class UserController(
     fun deleteUser(@PathVariable id: Long) {
         userService.deleteById(id)
     }
-
-    @GetMapping("/me")
-    fun getMyProfile(principal: Principal): UserResponseDto {
-        val user = userService.getByUsername(principal.name)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado")
-        return user.toResponseDto()
-    }
-
-    @PutMapping("/me")
-    fun updateCurrentUser(
-        @RequestBody dto: UserUpdateRequest,
-        authentication: Authentication
-    ): UserResponseDto {
-        val currentUsername = authentication.name
-        val user = userService.updateByUsername(currentUsername, dto)
-        return user.toResponseDto()
-    }
-
-
 }
+

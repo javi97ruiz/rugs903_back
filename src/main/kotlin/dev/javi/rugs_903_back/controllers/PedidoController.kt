@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 
 @RestController
-@RequestMapping("/api/pedidos")
+@RequestMapping("/pedidos")
 class PedidoController(
     private val pedidoService: PedidoService
 ) {
 
-    @GetMapping
+    @GetMapping("/admin")
     fun getAll(): List<PedidoResponseDto> {
         return pedidoService.findAll().map { it.toResponse() }
     }
