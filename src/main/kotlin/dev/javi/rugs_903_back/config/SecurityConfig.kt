@@ -49,16 +49,19 @@ class SecurityConfig(
 
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
-        val configuration = CorsConfiguration()
-        configuration.allowedOriginPatterns = listOf("https://rugs903-front.onrender.com")
-        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
-        configuration.allowedHeaders = listOf("Authorization", "Content-Type")
-        configuration.allowCredentials = true
+        val configuration = CorsConfiguration().apply {
+            allowedOriginPatterns = listOf("https://rugs903-front.onrender.com")
+            allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
+            allowedHeaders = listOf("Authorization", "Content-Type")
+            exposedHeaders = listOf("Authorization") // <-- expone cabecera para lectura (opcional pero recomendable)
+            allowCredentials = true
+        }
 
         val source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", configuration)
         return source
     }
+
 
 
     @Bean
