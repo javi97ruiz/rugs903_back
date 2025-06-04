@@ -9,30 +9,28 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import java.time.LocalDateTime
 
 @Configuration
-class DataInitializer (
+class DataInitializer(
     private val passwordEncoder: PasswordEncoder
-){
+) {
 
     @Bean
     fun initData(
         userRepo: UserRepository,
         clientRepo: ClientRepository,
-        direccionRepo: DireccionRepository,
         productoRepo: ProductRepository,
         customProductRepo: CustomProductRepository,
         pedidoRepo: PedidosRepository
     ) = CommandLineRunner {
 
-        // 🔄 Fuerza reinicialización
-        userRepo.deleteAll()
-        direccionRepo.deleteAll()
+        // 💣 Borra todo
+        pedidoRepo.deleteAll()
         clientRepo.deleteAll()
+        userRepo.deleteAll()
         productoRepo.deleteAll()
         customProductRepo.deleteAll()
-        pedidoRepo.deleteAll()
 
         if (userRepo.count() == 0L) {
-            // Usuarios
+            // 👤 Usuarios
             val admin = userRepo.save(User(
                 username = "admin",
                 password = passwordEncoder.encode("adminpass"),
@@ -41,66 +39,44 @@ class DataInitializer (
                 rol = "admin"
             ))
 
-            val user1 = userRepo.save(User(
-                username = "javi1",
-                password = passwordEncoder.encode("pass1"),
-                createdAt = LocalDateTime.now(),
-                updatedAt = LocalDateTime.now(),
-                rol = "usuario"
-            ))
-            val user2 = userRepo.save(User(
-                username = "javi2",
-                password = passwordEncoder.encode("pass2"),
-                createdAt = LocalDateTime.now(),
-                updatedAt = LocalDateTime.now(),
-                rol = "usuario"
-            ))
-            val user3 = userRepo.save(User(
-                username = "javi3",
-                password = passwordEncoder.encode("pass3"),
-                createdAt = LocalDateTime.now(),
-                updatedAt = LocalDateTime.now(),
-                rol = "usuario"
-            ))
+            val user1 = userRepo.save(User("javi1", passwordEncoder.encode("pass1"), LocalDateTime.now(), LocalDateTime.now(), rol = "usuario"))
+            val user2 = userRepo.save(User("javi2", passwordEncoder.encode("pass2"), LocalDateTime.now(), LocalDateTime.now(), rol = "usuario"))
+            val user3 = userRepo.save(User("javi3", passwordEncoder.encode("pass3"), LocalDateTime.now(), LocalDateTime.now(), rol = "usuario"))
 
-            // Direcciones
-            val direccion1 = direccionRepo.save(Direccion(
-                calle = "Calle A", numero = "12", portal = "1", piso = "2B",
-                codigoPostal = "28001", ciudad = "Madrid", provincia = "Madrid"
-            ))
-
-            val direccion2 = direccionRepo.save(Direccion(
-                calle = "Avenida B", numero = "8", portal = "2", piso = "3A",
-                codigoPostal = "08002", ciudad = "Barcelona", provincia = "Barcelona"
-            ))
-
-            val direccion3 = direccionRepo.save(Direccion(
-                calle = "Calle C", numero = "3", portal = "3", piso = "1C",
-                codigoPostal = "46003", ciudad = "Valencia", provincia = "Valencia"
-            ))
-
-            // Clientes
+            // 👥 Clientes con direcciones en cascada
             val cliente1 = clientRepo.save(Client(
-                id = 0,
-                address = direccion1,
+                address = Direccion("Calle A", "12", "1", "2B", "28001", "Madrid", "Madrid"),
                 phoneNumber = "600123456",
                 name = "Javi",
                 surname = "Ruiz",
                 user = user1
             ))
 
-            val cliente2 = clientRepo.save(Client(0, direccion2, "600789123", "Ana", "Lopez", user2))
-            val cliente3 = clientRepo.save(Client(0, direccion3, "600456789", "Luis", "Garcia", user3))
+            val cliente2 = clientRepo.save(Client(
+                address = Direccion("Avenida B", "8", "2", "3A", "08002", "Barcelona", "Barcelona"),
+                phoneNumber = "600789123",
+                name = "Ana",
+                surname = "Lopez",
+                user = user2
+            ))
 
-            // Productos
+            val cliente3 = clientRepo.save(Client(
+                address = Direccion("Calle C", "3", "3", "1C", "46003", "Valencia", "Valencia"),
+                phoneNumber = "600456789",
+                name = "Luis",
+                surname = "Garcia",
+                user = user3
+            ))
+
+            // 📦 Productos
             val prod1 = productoRepo.save(Product(name = "Alfombra Clásica", description = "Estilo tradicional", price = 120.0, quantity = 10))
             val prod2 = productoRepo.save(Product(name = "Alfombra Moderna", description = "Diseño actual", price = 150.0, quantity = 5))
 
-            // Productos personalizados
+            // 🧵 Productos personalizados
             customProductRepo.save(CustomProduct(name = "Alfombra Personalizada 1", height = 200, length = 150, imageUrl = "https://via.placeholder.com/200x150"))
             customProductRepo.save(CustomProduct(name = "Alfombra Personalizada 2", height = 100, length = 100, imageUrl = "https://via.placeholder.com/100x100"))
 
-            // Pedidos
+            // 🧾 Pedidos
             pedidoRepo.save(
                 Pedido(
                     clienteId = cliente1.id,
