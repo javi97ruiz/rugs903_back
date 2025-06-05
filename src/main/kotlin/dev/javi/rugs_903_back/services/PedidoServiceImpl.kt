@@ -6,7 +6,9 @@ import dev.javi.rugs_903_back.models.Pedido
 import dev.javi.rugs_903_back.repositories.ClientRepository
 import dev.javi.rugs_903_back.repositories.PedidosRepository
 import dev.javi.rugs_903_back.repositories.ProductRepository
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.web.server.ResponseStatusException
 import java.time.LocalDate
 
 @Service
@@ -53,7 +55,7 @@ class PedidoServiceImpl(
 
     override fun findByUsername(username: String): List<Pedido> {
         val client = clientRepository.findByUserUsername(username)
-            ?: throw UserException.UsernameNotFoundException("Cliente no encontrado para $username")
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No se encontró cliente para el usuario: $username")
 
         return pedidosRepository.findAll()
             .filter { it.clienteId == client.id }

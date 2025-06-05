@@ -24,10 +24,11 @@ class DataInitializer(
 
         // 🔄 Borra todo (el orden importa por las FK)
         pedidoRepo.deleteAll()
+        customProductRepo.deleteAll()
+        productoRepo.deleteAll()
         clientRepo.deleteAll()
         userRepo.deleteAll()
-        productoRepo.deleteAll()
-        customProductRepo.deleteAll()
+
 
         if (userRepo.count() == 0L) {
             // 👤 Usuarios
