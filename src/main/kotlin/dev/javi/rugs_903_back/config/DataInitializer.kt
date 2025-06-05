@@ -22,36 +22,12 @@ class DataInitializer(
         pedidoRepo: PedidosRepository
     ) = CommandLineRunner {
 
-        // ✅ Espera hasta que las tablas estén creadas
-        val maxRetries = 5
-        var attempts = 0
-        while (attempts < maxRetries) {
-            try {
-                userRepo.count()
-                clientRepo.count()
-                productoRepo.count()
-                customProductRepo.count()
-                pedidoRepo.count()
-                println("✅ Todas las tablas están disponibles.")
-                break
-            } catch (ex: Exception) {
-                attempts++
-                println("⏳ Esperando a que se creen las tablas... Intento $attempts/$maxRetries")
-                Thread.sleep(2000)
-            }
-        }
-
-        if (attempts == maxRetries) {
-            println("⛔ No se pudieron verificar todas las tablas. Abortando inicialización.")
-            return@CommandLineRunner
-        }
-
-        // 🔄 Borra todo en orden
+        // 🔄 Borra todo (el orden importa por las FK)
         pedidoRepo.deleteAll()
-        customProductRepo.deleteAll()
-        productoRepo.deleteAll()
         clientRepo.deleteAll()
         userRepo.deleteAll()
+        productoRepo.deleteAll()
+        customProductRepo.deleteAll()
 
         if (userRepo.count() == 0L) {
             // 👤 Usuarios
@@ -66,7 +42,6 @@ class DataInitializer(
                     rol = "admin"
                 )
             )
-            println("🟢 Usuario creado: ${admin.username}")
 
             val user1 = userRepo.save(
                 User(
@@ -79,8 +54,6 @@ class DataInitializer(
                     rol = "user"
                 )
             )
-            println("🟢 Usuario creado: ${user1.username}")
-
             val user2 = userRepo.save(
                 User(
                     id = 0,
@@ -92,8 +65,6 @@ class DataInitializer(
                     rol = "user"
                 )
             )
-            println("🟢 Usuario creado: ${user2.username}")
-
             val user3 = userRepo.save(
                 User(
                     id = 0,
@@ -105,9 +76,8 @@ class DataInitializer(
                     rol = "user"
                 )
             )
-            println("🟢 Usuario creado: ${user3.username}")
 
-            // 👥 Clientes con direcciones
+            // 👥 Clientes con direcciones (en cascada)
             val cliente1 = clientRepo.save(
                 Client(
                     id = 0,
@@ -128,7 +98,6 @@ class DataInitializer(
                     pedidos = emptyList()
                 )
             )
-            println("📘 Cliente creado: ${cliente1.name}")
 
             val cliente2 = clientRepo.save(
                 Client(
@@ -150,7 +119,6 @@ class DataInitializer(
                     pedidos = emptyList()
                 )
             )
-            println("📘 Cliente creado: ${cliente2.name}")
 
             val cliente3 = clientRepo.save(
                 Client(
@@ -172,7 +140,6 @@ class DataInitializer(
                     pedidos = emptyList()
                 )
             )
-            println("📘 Cliente creado: ${cliente3.name}")
 
             // 🧶 Productos
             val prod1 = productoRepo.save(
@@ -184,7 +151,6 @@ class DataInitializer(
                     quantity = 10
                 )
             )
-            println("🧶 Producto creado: ${prod1.name}")
 
             val prod2 = productoRepo.save(
                 Product(
@@ -195,10 +161,9 @@ class DataInitializer(
                     quantity = 5
                 )
             )
-            println("🧶 Producto creado: ${prod2.name}")
 
             // 🧵 Productos personalizados
-            val custom1 = customProductRepo.save(
+            customProductRepo.save(
                 CustomProduct(
                     id = 0,
                     name = "Alfombra Personalizada 1",
@@ -207,9 +172,8 @@ class DataInitializer(
                     imageUrl = "https://via.placeholder.com/200x150"
                 )
             )
-            println("🧵 CustomProduct creado: ${custom1.name}")
 
-            val custom2 = customProductRepo.save(
+            customProductRepo.save(
                 CustomProduct(
                     id = 0,
                     name = "Alfombra Personalizada 2",
@@ -218,10 +182,9 @@ class DataInitializer(
                     imageUrl = "https://via.placeholder.com/100x100"
                 )
             )
-            println("🧵 CustomProduct creado: ${custom2.name}")
 
             // 📦 Pedidos
-            val pedido1 = pedidoRepo.save(
+            pedidoRepo.save(
                 Pedido(
                     id = 0,
                     clienteId = cliente1.id,
@@ -232,9 +195,8 @@ class DataInitializer(
                     fecha = "2024-06-01"
                 )
             )
-            println("📦 Pedido creado para ${cliente1.name}")
 
-            val pedido2 = pedidoRepo.save(
+            pedidoRepo.save(
                 Pedido(
                     id = 0,
                     clienteId = cliente2.id,
@@ -245,7 +207,6 @@ class DataInitializer(
                     fecha = "2024-06-03"
                 )
             )
-            println("📦 Pedido creado para ${cliente2.name}")
         }
     }
 }
