@@ -22,7 +22,31 @@ class DataInitializer(
         pedidoRepo: PedidosRepository
     ) = CommandLineRunner {
 
-        // 🔄 Borra todo (el orden importa por las FK)
+        // ✅ Espera hasta que las tablas estén creadas
+        val maxRetries = 5
+        var attempts = 0
+        while (attempts < maxRetries) {
+            try {
+                userRepo.count()
+                clientRepo.count()
+                productoRepo.count()
+                customProductRepo.count()
+                pedidoRepo.count()
+                println("✅ Todas las tablas están disponibles.")
+                break
+            } catch (ex: Exception) {
+                attempts++
+                println("⏳ Esperando a que se creen las tablas... Intento $attempts/$maxRetries")
+                Thread.sleep(2000)
+            }
+        }
+
+        if (attempts == maxRetries) {
+            println("⛔ No se pudieron verificar todas las tablas. Abortando inicialización.")
+            return@CommandLineRunner
+        }
+
+        // 🔄 Borra todo en orden
         pedidoRepo.deleteAll()
         customProductRepo.deleteAll()
         productoRepo.deleteAll()
@@ -41,7 +65,8 @@ class DataInitializer(
                     isActive = true,
                     rol = "admin"
                 )
-            ).also { println("🟢 Usuario creado: ${it.username}") }
+            )
+            println("🟢 Usuario creado: ${admin.username}")
 
             val user1 = userRepo.save(
                 User(
@@ -53,7 +78,8 @@ class DataInitializer(
                     isActive = true,
                     rol = "user"
                 )
-            ).also { println("🟢 Usuario creado: ${it.username}") }
+            )
+            println("🟢 Usuario creado: ${user1.username}")
 
             val user2 = userRepo.save(
                 User(
@@ -65,7 +91,8 @@ class DataInitializer(
                     isActive = true,
                     rol = "user"
                 )
-            ).also { println("🟢 Usuario creado: ${it.username}") }
+            )
+            println("🟢 Usuario creado: ${user2.username}")
 
             val user3 = userRepo.save(
                 User(
@@ -77,9 +104,10 @@ class DataInitializer(
                     isActive = true,
                     rol = "user"
                 )
-            ).also { println("🟢 Usuario creado: ${it.username}") }
+            )
+            println("🟢 Usuario creado: ${user3.username}")
 
-            // 👥 Clientes
+            // 👥 Clientes con direcciones
             val cliente1 = clientRepo.save(
                 Client(
                     id = 0,
@@ -99,7 +127,8 @@ class DataInitializer(
                     user = user1,
                     pedidos = emptyList()
                 )
-            ).also { println("📘 Cliente creado: ${it.name}") }
+            )
+            println("📘 Cliente creado: ${cliente1.name}")
 
             val cliente2 = clientRepo.save(
                 Client(
@@ -120,7 +149,8 @@ class DataInitializer(
                     user = user2,
                     pedidos = emptyList()
                 )
-            ).also { println("📘 Cliente creado: ${it.name}") }
+            )
+            println("📘 Cliente creado: ${cliente2.name}")
 
             val cliente3 = clientRepo.save(
                 Client(
@@ -141,7 +171,8 @@ class DataInitializer(
                     user = user3,
                     pedidos = emptyList()
                 )
-            ).also { println("📘 Cliente creado: ${it.name}") }
+            )
+            println("📘 Cliente creado: ${cliente3.name}")
 
             // 🧶 Productos
             val prod1 = productoRepo.save(
@@ -152,7 +183,8 @@ class DataInitializer(
                     price = 120.0,
                     quantity = 10
                 )
-            ).also { println("🧶 Producto creado: ${it.name}") }
+            )
+            println("🧶 Producto creado: ${prod1.name}")
 
             val prod2 = productoRepo.save(
                 Product(
@@ -162,10 +194,11 @@ class DataInitializer(
                     price = 150.0,
                     quantity = 5
                 )
-            ).also { println("🧶 Producto creado: ${it.name}") }
+            )
+            println("🧶 Producto creado: ${prod2.name}")
 
             // 🧵 Productos personalizados
-            customProductRepo.save(
+            val custom1 = customProductRepo.save(
                 CustomProduct(
                     id = 0,
                     name = "Alfombra Personalizada 1",
@@ -173,9 +206,10 @@ class DataInitializer(
                     length = 150,
                     imageUrl = "https://via.placeholder.com/200x150"
                 )
-            ).also { println("🧵 CustomProduct creado: Alfombra Personalizada 1") }
+            )
+            println("🧵 CustomProduct creado: ${custom1.name}")
 
-            customProductRepo.save(
+            val custom2 = customProductRepo.save(
                 CustomProduct(
                     id = 0,
                     name = "Alfombra Personalizada 2",
@@ -183,10 +217,11 @@ class DataInitializer(
                     length = 100,
                     imageUrl = "https://via.placeholder.com/100x100"
                 )
-            ).also { println("🧵 CustomProduct creado: Alfombra Personalizada 2") }
+            )
+            println("🧵 CustomProduct creado: ${custom2.name}")
 
             // 📦 Pedidos
-            pedidoRepo.save(
+            val pedido1 = pedidoRepo.save(
                 Pedido(
                     id = 0,
                     clienteId = cliente1.id,
@@ -196,9 +231,10 @@ class DataInitializer(
                     total = prod1.price * 2,
                     fecha = "2024-06-01"
                 )
-            ).also { println("📦 Pedido creado para ${cliente1.name}") }
+            )
+            println("📦 Pedido creado para ${cliente1.name}")
 
-            pedidoRepo.save(
+            val pedido2 = pedidoRepo.save(
                 Pedido(
                     id = 0,
                     clienteId = cliente2.id,
@@ -208,7 +244,8 @@ class DataInitializer(
                     total = prod2.price,
                     fecha = "2024-06-03"
                 )
-            ).also { println("📦 Pedido creado para ${cliente2.name}") }
+            )
+            println("📦 Pedido creado para ${cliente2.name}")
         }
     }
 }
