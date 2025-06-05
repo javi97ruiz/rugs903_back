@@ -184,29 +184,30 @@ class DataInitializer(
             )
 
             // 📦 Pedidos
-            pedidoRepo.save(
+            // 📦 Pedidos
+            val pedido1 = pedidoRepo.save(
                 Pedido(
-                    id = 0,
-                    clienteId = cliente1.id,
-                    productId = prod1.id,
+                    client = cliente1,
+                    producto = prod1,
                     cantidad = 2,
                     precioUnitario = prod1.price,
                     total = prod1.price * 2,
                     fecha = "2024-06-01"
                 )
             )
+            println("📦 Pedido creado: $pedido1")
 
-            pedidoRepo.save(
+            val pedido2 = pedidoRepo.save(
                 Pedido(
-                    id = 0,
-                    clienteId = cliente2.id,
-                    productId = prod2.id,
+                    client = cliente2,
+                    producto = prod2,
                     cantidad = 1,
                     precioUnitario = prod2.price,
                     total = prod2.price,
                     fecha = "2024-06-03"
                 )
             )
+            println("📦 Pedido creado: $pedido2")
         }
     }
 }

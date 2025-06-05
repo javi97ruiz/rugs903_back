@@ -9,19 +9,13 @@ data class Pedido(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
-    @Column(name = "cliente_id")
-    val clienteId: Long = 0,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cliente_id")
+    val client: Client,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cliente_id", insertable = false, updatable = false)
-    val client: Client? = null,
-
-    @Column(name = "product_id", insertable = false, updatable = false)
-    val productId: Long,
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", insertable = false, updatable = false)
-    val producto: Product? = null,
+    @JoinColumn(name = "product_id")
+    val producto: Product,
 
     @Column
     val cantidad: Int = 0,
