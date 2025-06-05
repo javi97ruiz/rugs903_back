@@ -9,14 +9,18 @@ fun Product.toResponse(): ProductResponseDto = ProductResponseDto(
     name = this.name,
     description = this.description,
     price = this.price,
-    quantity = this.quantity
+    quantity = this.quantity,
+    imagen = this.imagen // ✅ NUEVO CAMPO
 )
+
 
 fun ProductRequestDto.toModel(): Product = Product(
     name = this.name,
     description = this.description,
     price = this.price,
-    quantity = this.quantity
+    quantity = this.quantity,
+    imagen = this.imagen // ✅ NUEVO CAMPO
 )
+
 
 fun List<Product>.toResponseList(): List<ProductResponseDto> = this.map { it.toResponse() }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/products")
 class ProductController(
     private val productService: ProductService
 ) {
