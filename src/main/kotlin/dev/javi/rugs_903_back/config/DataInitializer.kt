@@ -29,7 +29,6 @@ class DataInitializer(
         clientRepo.deleteAll()
         userRepo.deleteAll()
 
-
         if (userRepo.count() == 0L) {
             // 👤 Usuarios
             val admin = userRepo.save(
@@ -42,7 +41,7 @@ class DataInitializer(
                     isActive = true,
                     rol = "admin"
                 )
-            )
+            ).also { println("🟢 Usuario creado: ${it.username}") }
 
             val user1 = userRepo.save(
                 User(
@@ -54,7 +53,8 @@ class DataInitializer(
                     isActive = true,
                     rol = "user"
                 )
-            )
+            ).also { println("🟢 Usuario creado: ${it.username}") }
+
             val user2 = userRepo.save(
                 User(
                     id = 0,
@@ -65,7 +65,8 @@ class DataInitializer(
                     isActive = true,
                     rol = "user"
                 )
-            )
+            ).also { println("🟢 Usuario creado: ${it.username}") }
+
             val user3 = userRepo.save(
                 User(
                     id = 0,
@@ -76,9 +77,9 @@ class DataInitializer(
                     isActive = true,
                     rol = "user"
                 )
-            )
+            ).also { println("🟢 Usuario creado: ${it.username}") }
 
-            // 👥 Clientes con direcciones (en cascada)
+            // 👥 Clientes
             val cliente1 = clientRepo.save(
                 Client(
                     id = 0,
@@ -98,7 +99,7 @@ class DataInitializer(
                     user = user1,
                     pedidos = emptyList()
                 )
-            )
+            ).also { println("📘 Cliente creado: ${it.name}") }
 
             val cliente2 = clientRepo.save(
                 Client(
@@ -119,7 +120,7 @@ class DataInitializer(
                     user = user2,
                     pedidos = emptyList()
                 )
-            )
+            ).also { println("📘 Cliente creado: ${it.name}") }
 
             val cliente3 = clientRepo.save(
                 Client(
@@ -140,7 +141,7 @@ class DataInitializer(
                     user = user3,
                     pedidos = emptyList()
                 )
-            )
+            ).also { println("📘 Cliente creado: ${it.name}") }
 
             // 🧶 Productos
             val prod1 = productoRepo.save(
@@ -151,7 +152,7 @@ class DataInitializer(
                     price = 120.0,
                     quantity = 10
                 )
-            )
+            ).also { println("🧶 Producto creado: ${it.name}") }
 
             val prod2 = productoRepo.save(
                 Product(
@@ -161,7 +162,7 @@ class DataInitializer(
                     price = 150.0,
                     quantity = 5
                 )
-            )
+            ).also { println("🧶 Producto creado: ${it.name}") }
 
             // 🧵 Productos personalizados
             customProductRepo.save(
@@ -172,7 +173,7 @@ class DataInitializer(
                     length = 150,
                     imageUrl = "https://via.placeholder.com/200x150"
                 )
-            )
+            ).also { println("🧵 CustomProduct creado: Alfombra Personalizada 1") }
 
             customProductRepo.save(
                 CustomProduct(
@@ -182,7 +183,7 @@ class DataInitializer(
                     length = 100,
                     imageUrl = "https://via.placeholder.com/100x100"
                 )
-            )
+            ).also { println("🧵 CustomProduct creado: Alfombra Personalizada 2") }
 
             // 📦 Pedidos
             pedidoRepo.save(
@@ -195,7 +196,7 @@ class DataInitializer(
                     total = prod1.price * 2,
                     fecha = "2024-06-01"
                 )
-            )
+            ).also { println("📦 Pedido creado para ${cliente1.name}") }
 
             pedidoRepo.save(
                 Pedido(
@@ -207,7 +208,7 @@ class DataInitializer(
                     total = prod2.price,
                     fecha = "2024-06-03"
                 )
-            )
+            ).also { println("📦 Pedido creado para ${cliente2.name}") }
         }
     }
 }
