@@ -6,3 +6,4 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface CustomProductRepository : JpaRepository<CustomProduct, Long>
+
