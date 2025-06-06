@@ -35,6 +35,7 @@ class SecurityConfig(
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests {
                 it
+                    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .requestMatchers("/auth/**").permitAll()
                     .requestMatchers("/users/me", "/users/me/**").hasAnyRole("USER", "ADMIN")
                     .requestMatchers("/users/admin", "/users/admin/**").hasRole("ADMIN")
@@ -65,10 +66,6 @@ class SecurityConfig(
         source.registerCorsConfiguration("/**", configuration)
         return source
     }
-
-
-
-
 
     @Bean
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
