@@ -149,7 +149,7 @@ class DataInitializer(
                     description = "Estilo tradicional",
                     price = 120.0,
                     quantity = 10,
-                    imagen = "https://via.placeholder.com/400x300?text=Alfombra+Clasica"
+                    imagen = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5BesV-aGJBJaym5RzAYDRv8LxMS48v4bvaQ&s"
 
                 )
             )
@@ -161,7 +161,7 @@ class DataInitializer(
                     description = "Diseño actual",
                     price = 150.0,
                     quantity = 5,
-                    imagen = "https://via.placeholder.com/400x300?text=Alfombra+Clasica"
+                    imagen = "https://mycustomrugs.com/cdn/shop/files/Rectangular_KAWS-Inspired_Custom_Tufted_Rug_3.jpg?v=1727332429"
                 )
             )
 
