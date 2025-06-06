@@ -68,7 +68,9 @@ dependencies {
     implementation("com.stripe:stripe-java:24.6.0")
 
     implementation("com.cloudinary:cloudinary-core:1.31.0")
-    implementation("com.cloudinary:cloudinary-http-client:1.37.0")
+    implementation("com.cloudinary:cloudinary-http44:1.37.2")
+    implementation("org.apache.httpcomponents:httpclient:4.5.13")
+
 
 
 }
