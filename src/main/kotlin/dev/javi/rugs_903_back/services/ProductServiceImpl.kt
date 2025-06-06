@@ -21,11 +21,13 @@ class ProductServiceImpl(
                 name = product.name,
                 description = product.description,
                 price = product.price,
-                quantity = product.quantity
+                quantity = product.quantity,
+                imagen = product.imagen // ✅ Añadir esto
             )
             productRepository.save(updated)
         }.orElse(null)
     }
+
 
     override fun deleteById(id: Long) {
         productRepository.deleteById(id)

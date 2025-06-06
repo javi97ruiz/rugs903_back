@@ -4,6 +4,7 @@ import dev.javi.rugs_903_back.dto.PedidoRequestDto
 import dev.javi.rugs_903_back.dto.PedidoResponseDto
 import dev.javi.rugs_903_back.mappers.toResponse
 import dev.javi.rugs_903_back.mappers.toResponseList
+import dev.javi.rugs_903_back.repositories.PedidosRepository
 import dev.javi.rugs_903_back.services.PedidoService
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.Authentication
@@ -13,7 +14,8 @@ import org.springframework.web.server.ResponseStatusException
 @RestController
 @RequestMapping("/pedidos")
 class PedidoController(
-    private val pedidoService: PedidoService
+    private val pedidoService: PedidoService,
+    private val pedidosRepository: PedidosRepository
 ) {
 
     @GetMapping("/admin")
@@ -47,4 +49,20 @@ class PedidoController(
         val username = authentication.name
         return pedidoService.findByUsername(username).toResponseList()
     }
+
+    @PutMapping("/{id}/cancelar")
+    fun cancelarPedido(@PathVariable id: Long): PedidoResponseDto {
+        val pedido = pedidoService.findById(id)
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido no encontrado")
+
+        // Solo si no está ya cancelado o enviado
+        if (pedido.estado == "cancelado" || pedido.estado == "enviado") {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "No se puede cancelar este pedido")
+        }
+
+        pedido.estado = "cancelado"
+        val updated = pedidosRepository.save(pedido)
+        return updated.toResponse()
+    }
+
 }

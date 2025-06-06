@@ -10,6 +10,9 @@ data class CustomProduct (
     val name: String,
     val height: Int,
     val length: Int,
-    val imageUrl: String
+    val imageUrl: String,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pedido_id", nullable = true)
+    val pedido: Pedido? = null
 
 )

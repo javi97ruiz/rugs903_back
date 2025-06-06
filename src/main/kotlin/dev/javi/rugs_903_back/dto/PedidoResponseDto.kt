@@ -9,5 +9,8 @@ data class PedidoResponseDto(
     val cantidad: Int,
     val precioUnitario: Double,
     val total: Double,
-    val fecha: String
+    val fecha: String,
+    val customProducts: List<CustomProductSimpleDto> = emptyList(),
+    val estado: String,
+
 )

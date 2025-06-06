@@ -10,7 +10,8 @@ fun CustomProduct.toResponseDto(): CustomProductResponseDto = CustomProductRespo
     name = this.name,
     height = this.height,
     length = this.length,
-    imageUrl = this.imageUrl
+    imageUrl = this.imageUrl,
+    pedidoId = this.pedido?.id
 )
 
 fun CustomProductRequestDto.toModel(): CustomProduct = CustomProduct(

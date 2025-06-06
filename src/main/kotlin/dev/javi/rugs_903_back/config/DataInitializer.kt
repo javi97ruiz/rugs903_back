@@ -148,7 +148,9 @@ class DataInitializer(
                     name = "Alfombra Clásica",
                     description = "Estilo tradicional",
                     price = 120.0,
-                    quantity = 10
+                    quantity = 10,
+                    imagen = "https://via.placeholder.com/400x300?text=Alfombra+Clasica"
+
                 )
             )
 
@@ -158,7 +160,8 @@ class DataInitializer(
                     name = "Alfombra Moderna",
                     description = "Diseño actual",
                     price = 150.0,
-                    quantity = 5
+                    quantity = 5,
+                    imagen = "https://via.placeholder.com/400x300?text=Alfombra+Clasica"
                 )
             )
 

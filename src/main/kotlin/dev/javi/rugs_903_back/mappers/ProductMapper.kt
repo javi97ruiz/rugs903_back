@@ -11,6 +11,7 @@ fun Product.toResponse(): ProductResponseDto = ProductResponseDto(
     price = this.price,
     quantity = this.quantity,
     imagen = this.imagen // ✅ NUEVO CAMPO
+
 )
 
 

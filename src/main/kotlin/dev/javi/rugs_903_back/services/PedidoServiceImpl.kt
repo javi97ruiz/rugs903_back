@@ -3,6 +3,7 @@ package dev.javi.rugs_903_back.services
 import dev.javi.rugs_903_back.dto.PedidoRequestDto
 import dev.javi.rugs_903_back.models.Pedido
 import dev.javi.rugs_903_back.repositories.ClientRepository
+import dev.javi.rugs_903_back.repositories.CustomProductRepository
 import dev.javi.rugs_903_back.repositories.PedidosRepository
 import dev.javi.rugs_903_back.repositories.ProductRepository
 import org.springframework.http.HttpStatus
@@ -14,7 +15,8 @@ import java.time.LocalDate
 class PedidoServiceImpl(
     private val pedidosRepository: PedidosRepository,
     private val clientRepository: ClientRepository,
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    private val customProductRepository: CustomProductRepository // ✅ añadimos este
 ) : PedidoService {
 
     override fun findAll(): List<Pedido> = pedidosRepository.findAll()
@@ -41,8 +43,20 @@ class PedidoServiceImpl(
             producto = producto
         )
 
-        return pedidosRepository.save(pedido)
+        val savedPedido = pedidosRepository.save(pedido)
+
+        // ✅ Si el usuario envió customProductIds, los asociamos al pedido
+        dto.customProductIds?.forEach { customProductId ->
+            val customProduct = customProductRepository.findById(customProductId)
+                .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Producto personalizado no encontrado con ID: $customProductId") }
+
+            val updatedProduct = customProduct.copy(pedido = savedPedido)
+            customProductRepository.save(updatedProduct)
+        }
+
+        return savedPedido
     }
+
 
     override fun deleteById(id: Long) = pedidosRepository.deleteById(id)
 

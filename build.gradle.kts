@@ -67,6 +67,9 @@ dependencies {
     implementation("org.springframework.security:spring-security-oauth2-resource-server")
     implementation("com.stripe:stripe-java:24.6.0")
 
+    implementation("com.cloudinary:cloudinary-core:1.31.0")
+
+
 }
 
 kotlin {

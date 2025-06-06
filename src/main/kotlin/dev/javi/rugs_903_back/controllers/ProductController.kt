@@ -5,15 +5,18 @@ import dev.javi.rugs_903_back.dto.ProductResponseDto
 import dev.javi.rugs_903_back.mappers.toModel
 import dev.javi.rugs_903_back.mappers.toResponse
 import dev.javi.rugs_903_back.mappers.toResponseList
+import dev.javi.rugs_903_back.services.ImageService
 import dev.javi.rugs_903_back.services.ProductService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping("/products")
 class ProductController(
-    private val productService: ProductService
+    private val productService: ProductService,
+    private val imageService: ImageService
 ) {
 
     @GetMapping
@@ -46,4 +49,11 @@ class ProductController(
         }
         productService.deleteById(id)
     }
+
+    @PostMapping("/upload-image")
+    fun uploadImage(@RequestParam("file") file: MultipartFile): Map<String, String> {
+        val url = imageService.uploadImage(file)
+        return mapOf("url" to url)
+    }
+
 }

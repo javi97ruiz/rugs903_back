@@ -6,5 +6,6 @@ data class CustomProductResponseDto(
     val name: String,
     val height: Int,
     val length: Int,
-    val imageUrl: String
+    val imageUrl: String,
+    val pedidoId: Long?
 )

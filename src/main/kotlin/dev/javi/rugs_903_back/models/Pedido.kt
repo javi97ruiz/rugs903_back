@@ -27,5 +27,12 @@ data class Pedido(
     val total: Double = 0.0,
 
     @Column
-    val fecha: String = ""
+    val fecha: String = "",
+
+    @OneToMany(mappedBy = "pedido", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    val customProducts: List<CustomProduct> = emptyList(),
+
+    @Column
+    var estado: String = "pendiente", // valores posibles: pendiente, enviado, cancelado
+
 )
