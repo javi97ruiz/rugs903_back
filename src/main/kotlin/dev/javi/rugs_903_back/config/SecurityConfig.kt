@@ -45,7 +45,7 @@ class SecurityConfig(
                     .requestMatchers("/clients/**").authenticated()
 
                     // ✅ PRODUCTS → primero las de admin:
-                    .requestMatchers(HttpMethod.POST, "/products/**").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.POST, "/products").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.PUT, "/products/**").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.DELETE, "/products/**").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
