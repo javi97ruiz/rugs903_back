@@ -43,11 +43,22 @@ class SecurityConfig(
                     .requestMatchers("/pedidos/admin", "/pedidos/admin/**").hasRole("ADMIN")
                     .requestMatchers("/pedidos", "/pedidos/**").hasRole("ADMIN")
                     .requestMatchers("/clients/**").authenticated()
-                    .requestMatchers("/products/**", "/custom-products/**").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/products/**").hasRole("ADMIN")
-                    .anyRequest().authenticated()
 
+                    // ✅ PRODUCTS → primero las de admin:
+                    .requestMatchers(HttpMethod.POST, "/products/**").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.PUT, "/products/**").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.DELETE, "/products/**").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
+
+                    // ✅ CUSTOM PRODUCTS → igual:
+                    .requestMatchers(HttpMethod.POST, "/custom-products/**").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.PUT, "/custom-products/**").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.DELETE, "/custom-products/**").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.GET, "/custom-products/**").permitAll()
+
+                    .anyRequest().authenticated()
             }
+
             .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter::class.java)
 
         return http.build()
