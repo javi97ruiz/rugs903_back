@@ -56,7 +56,7 @@ class SecurityConfig(
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration().apply {
-            allowedOrigins = listOf("https://rugs903-front.onrender.com")
+            allowedOriginPatterns = listOf("https://rugs903-front.onrender.com")
             allowedMethods = listOf("*")
             allowedHeaders = listOf("*")
             exposedHeaders = listOf("Authorization")
