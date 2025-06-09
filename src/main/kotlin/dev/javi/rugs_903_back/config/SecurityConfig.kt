@@ -51,7 +51,7 @@ class SecurityConfig(
                     .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
 
                     // ✅ CUSTOM PRODUCTS → igual:
-                    .requestMatchers(HttpMethod.POST, "/custom-products").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.POST, "/custom-products").hasAnyRole("USER", "ADMIN")
                     .requestMatchers(HttpMethod.PUT, "/custom-products/**").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.DELETE, "/custom-products/**").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.GET, "/custom-products/**").permitAll()
