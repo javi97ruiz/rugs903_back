@@ -44,6 +44,7 @@ class SecurityConfig(
                     .requestMatchers("/pedidos", "/pedidos/**").hasRole("ADMIN")
                     .requestMatchers("/clients/**").authenticated()
                     .requestMatchers("/products/**", "/custom-products/**").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/products/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
 
             }
