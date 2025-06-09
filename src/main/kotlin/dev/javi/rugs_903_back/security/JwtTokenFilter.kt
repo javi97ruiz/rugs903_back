@@ -40,7 +40,10 @@ class JwtTokenFilter(
             )
             authentication.details = WebAuthenticationDetailsSource().buildDetails(request)
 
+            println("Authorities del user: ${userDetails.authorities}")
             SecurityContextHolder.getContext().authentication = authentication
+            println("Authentication seteada: ${SecurityContextHolder.getContext().authentication}")
+
         }
 
         filterChain.doFilter(request, response)
