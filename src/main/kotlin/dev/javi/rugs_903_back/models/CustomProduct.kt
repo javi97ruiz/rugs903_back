@@ -10,6 +10,7 @@ data class CustomProduct (
     val name: String,
     val height: Int,
     val length: Int,
+    @Column(columnDefinition = "text")
     val imageUrl: String,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pedido_id", nullable = true)
