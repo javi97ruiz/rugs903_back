@@ -20,6 +20,11 @@ class StripeService {
         successUrl: String,
         cancelUrl: String
     ): String {
+        val stripeKey = System.getenv("STRIPE_SECRET_KEY")
+        println("👉 Stripe SECRET KEY: $stripeKey")  // LOG para ver si llega
+
+        Stripe.apiKey = stripeKey ?: throw IllegalStateException("Stripe Secret Key no configurada.")
+
         val lineItems = items.map {
             SessionCreateParams.LineItem.builder()
                 .setQuantity(it.quantity.toLong())
@@ -44,7 +49,12 @@ class StripeService {
             .setCancelUrl(cancelUrl)
             .build()
 
+        println("👉 Creando sesión de pago en Stripe...")  // LOG extra
+
         val session = Session.create(params)
+        println("👉 Session URL creada: ${session.url}")   // LOG extra
+
         return session.url
     }
+
 }
