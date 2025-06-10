@@ -20,7 +20,7 @@ class PedidoController(
 
     @GetMapping("/admin")
     fun getAll(): List<PedidoResponseDto> {
-        return pedidoService.findAll().map { it.toResponse() }
+        return pedidoService.findAll().toResponseList()
     }
 
     @GetMapping("/{id}")
@@ -41,7 +41,7 @@ class PedidoController(
 
     @GetMapping("/cliente/{clienteId}")
     fun getPedidosByCliente(@PathVariable clienteId: Long): List<PedidoResponseDto> {
-        return pedidoService.findByClienteId(clienteId).map { it.toResponse() }
+        return pedidoService.findByClienteId(clienteId).toResponseList()
     }
 
     @GetMapping("/me")
@@ -64,5 +64,4 @@ class PedidoController(
         val updated = pedidosRepository.save(pedido)
         return updated.toResponse()
     }
-
 }
