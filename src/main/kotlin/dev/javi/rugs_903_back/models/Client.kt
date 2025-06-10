@@ -1,5 +1,6 @@
 package dev.javi.rugs_903_back.models
 
+import com.fasterxml.jackson.annotation.JsonBackReference
 import jakarta.persistence.*
 
 
@@ -25,6 +26,7 @@ data class Client(
     val user: User,
 
     @OneToMany(mappedBy = "client", cascade = [CascadeType.ALL]) // Un cliente tiene múltiples pedidos
+    @JsonBackReference
     val pedidos: List<Pedido> = mutableListOf()
 
 

@@ -1,5 +1,6 @@
 package dev.javi.rugs_903_back.models
 
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import jakarta.persistence.*
 
 @Entity
@@ -11,6 +12,7 @@ data class Pedido(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id")
+    @JsonManagedReference
     val client: Client,
 
     @Column
