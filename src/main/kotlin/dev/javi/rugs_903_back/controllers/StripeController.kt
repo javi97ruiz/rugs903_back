@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity
 
 
 @RestController
-@RequestMapping("/api/payment")
+@RequestMapping("/payment")
 class StripeController(
     private val stripeService: StripeService
 ) {
