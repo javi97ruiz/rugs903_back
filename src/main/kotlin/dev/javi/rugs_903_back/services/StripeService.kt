@@ -18,7 +18,9 @@ class StripeService {
     fun createCheckoutSession(
         items: List<CheckoutItem>,
         successUrl: String,
-        cancelUrl: String
+        cancelUrl: String,
+        userId: Long,
+        productosJson: String
     ): String {
         val stripeKey = System.getenv("STRIPE_SECRET_KEY")
         println("👉 Stripe SECRET KEY: $stripeKey")  // LOG para ver si llega
@@ -45,6 +47,8 @@ class StripeService {
         val params = SessionCreateParams.builder()
             .addAllLineItem(lineItems)
             .setMode(SessionCreateParams.Mode.PAYMENT)
+            .putMetadata("userId", userId.toString())
+            .putMetadata("productos", productosJson)
             .setSuccessUrl(successUrl)
             .setCancelUrl(cancelUrl)
             .build()

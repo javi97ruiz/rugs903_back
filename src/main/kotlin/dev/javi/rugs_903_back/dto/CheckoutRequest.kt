@@ -8,5 +8,8 @@ data class CheckoutItem(
 )
 
 data class CheckoutRequest(
-    val items: List<CheckoutItem>
+    val items: List<CheckoutItem>,
+    val userId: Long,
+    val productos: String  // JSON del carrito
 )
+
