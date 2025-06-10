@@ -21,7 +21,9 @@ class StripeController(
             val url = stripeService.createCheckoutSession(
                 items = request.items,
                 successUrl = "$frontendUrl/success",
-                cancelUrl = "$frontendUrl/cancel"
+                cancelUrl = "$frontendUrl/cancel",
+                userId = request.userId,
+                productosJson = request.productos
             )
             ResponseEntity.ok(mapOf("url" to url))
         } catch (e: Exception) {
