@@ -15,12 +15,18 @@ class StripeController(
 
     @PostMapping("/checkout")
     fun createCheckoutSession(@RequestBody request: CheckoutRequest): ResponseEntity<Map<String, String>> {
-        val url = stripeService.createCheckoutSession(
-            items = request.items,
-            successUrl = "http://localhost:5173/success",
-            cancelUrl = "http://localhost:5173/cancel"
-        )
-        return ResponseEntity.ok(mapOf("url" to url))
+        return try {
+            val url = stripeService.createCheckoutSession(
+                items = request.items,
+                successUrl = "http://localhost:5173/success",
+                cancelUrl = "http://localhost:5173/cancel"
+            )
+            ResponseEntity.ok(mapOf("url" to url))
+        } catch (e: Exception) {
+            e.printStackTrace()  // <--- Imprime el error de Stripe
+            ResponseEntity.status(500).body(mapOf("error" to (e.message ?: "Unknown error")))
+        }
     }
+
 
 }
