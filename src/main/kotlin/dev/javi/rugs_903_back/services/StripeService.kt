@@ -12,7 +12,7 @@ class StripeService {
 
     @PostConstruct
     fun init() {
-        Stripe.apiKey = System.getenv("STRIPE_SECRET_KEY") // <- la cogeremos de las env vars
+        Stripe.apiKey = System.getenv("STRIPE_SECRET_KEY")
     }
 
     fun createCheckoutSession(
@@ -22,10 +22,10 @@ class StripeService {
         userId: Long,
         productosJson: String
     ): String {
-        val stripeKey = System.getenv("STRIPE_SECRET_KEY")
-        println("👉 Stripe SECRET KEY: $stripeKey")  // LOG para ver si llega
+        // ⚠️ Por seguridad volvemos a setear aquí también (doble seguro)
+        Stripe.apiKey = System.getenv("STRIPE_SECRET_KEY")
 
-        Stripe.apiKey = stripeKey ?: throw IllegalStateException("Stripe Secret Key no configurada.")
+        println("👉 Creando sesión Stripe para userId=$userId")
 
         val lineItems = items.map {
             SessionCreateParams.LineItem.builder()
@@ -47,20 +47,17 @@ class StripeService {
         val params = SessionCreateParams.builder()
             .addAllLineItem(lineItems)
             .setMode(SessionCreateParams.Mode.PAYMENT)
-            .putMetadata("userId", userId.toString())
+            .putMetadata("userId", userId.toString()) // 👈 metadatos para el webhook
             .putMetadata("productos", productosJson)
             .setSuccessUrl(successUrl)
             .setCancelUrl(cancelUrl)
-            .addExpand("payment_intent")  // opcional
-            .addExpand("line_items")      // importante si quieres productos
             .build()
 
-        println("👉 Creando sesión de pago en Stripe...")  // LOG extra
-
         val session = Session.create(params)
-        println("👉 Session URL creada: ${session.url}")   // LOG extra
+
+        println("👉 Session URL creada: ${session.url}")
 
         return session.url
     }
-
 }
+
