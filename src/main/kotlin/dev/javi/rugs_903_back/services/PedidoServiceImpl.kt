@@ -23,7 +23,7 @@ class PedidoServiceImpl(
 
     override fun findById(id: Long): Pedido? = pedidosRepository.findById(id).orElse(null)
 
-    override fun save(dto: PedidoRequestDto): Pedido {
+    override fun save(dto: PedidoRequestDto, estado: String): Pedido {
         val cliente = clientRepository.findById(dto.clienteId)
             .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente no encontrado") }
 
@@ -39,23 +39,25 @@ class PedidoServiceImpl(
             precioUnitario = precioUnitario,
             total = total,
             fecha = fecha,
+            estado = estado,  // 👈 importante
             client = cliente,
             producto = producto
         )
 
         val savedPedido = pedidosRepository.save(pedido)
 
-        // ✅ Si el usuario envió customProductIds, los asociamos al pedido
         dto.customProductIds?.forEach { customProductId ->
             val customProduct = customProductRepository.findById(customProductId)
-                .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Producto personalizado no encontrado con ID: $customProductId") }
-
+                .orElseThrow {
+                    ResponseStatusException(HttpStatus.NOT_FOUND, "Producto personalizado no encontrado con ID: $customProductId")
+                }
             val updatedProduct = customProduct.copy(pedido = savedPedido)
             customProductRepository.save(updatedProduct)
         }
 
         return savedPedido
     }
+
 
 
     override fun deleteById(id: Long) = pedidosRepository.deleteById(id)
