@@ -24,8 +24,8 @@ class PedidoServiceImpl(
     override fun findById(id: Long): Pedido? = pedidosRepository.findById(id).orElse(null)
 
     override fun save(dto: PedidoRequestDto, estado: String): Pedido {
-        val cliente = clientRepository.findById(dto.clienteId)
-            .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente no encontrado") }
+        val cliente = clientRepository.findByUserId(dto.clienteId)
+            .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente no encontrado para el usuario con id ${dto.clienteId}") }
 
         val producto = productRepository.findById(dto.productId)
             .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado") }
