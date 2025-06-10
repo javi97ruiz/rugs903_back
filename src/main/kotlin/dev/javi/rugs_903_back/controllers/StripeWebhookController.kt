@@ -28,35 +28,23 @@ class StripeWebhookController(
             val event = Webhook.constructEvent(payload, sigHeader, endpointSecret)
 
             println("🔔 Recibido evento Stripe: ${event.type}")
+            println("🔍 RAW PAYLOAD: $payload")
+            println("🔍 EVENT DATA: ${event.data}")
+            println("🔍 EVENT OBJECT: ${event.data.`object`}")
 
             if (event.type == "checkout.session.completed") {
+
                 val optionalObject = event.dataObjectDeserializer.`object`
+                println("🔍 optionalObject.isPresent=${optionalObject.isPresent}")
 
                 if (optionalObject.isPresent) {
-                    val rawObject = optionalObject.get()
-                    println("👉 Tipo de object recibido: ${rawObject.javaClass.name}")
+                    val session = optionalObject.get() as Session
+                    println("✅ Pago completado: ${session.id}")
 
-                    val userId: Long?
-                    val productosJson: String
+                    val userId = session.metadata["userId"]?.toLongOrNull()
+                    val productosJson = session.metadata["productos"] ?: "[]"
 
-                    if (rawObject is Session) {
-                        val session = rawObject
-                        println("✅ Pago completado: ${session.id}")
-
-                        userId = session.metadata["userId"]?.toLongOrNull()
-                        productosJson = session.metadata["productos"] ?: "[]"
-
-                    } else if (rawObject is Map<*, *>) {
-                        // Fallback → parsear manualmente el Map
-                        val metadata = (rawObject["metadata"] as? Map<String, String>) ?: emptyMap()
-                        userId = metadata["userId"]?.toLongOrNull()
-                        productosJson = metadata["productos"] ?: "[]"
-
-                        println("✅ [Fallback] Metadata recibida manualmente: userId=$userId productos=$productosJson")
-                    } else {
-                        println("⚠️ WARNING: object no es Session ni Map, tipo: ${rawObject.javaClass.name}")
-                        return ResponseEntity.ok("Evento recibido (sin procesar)")
-                    }
+                    println("👉 Metadata recibida: userId=$userId, productos=$productosJson")
 
                     // Validación de userId
                     if (userId == null) {
@@ -65,16 +53,17 @@ class StripeWebhookController(
                     }
 
                     // Parseamos productosJson
-                    val objectMapper = jacksonObjectMapper()
+                    val objectMapper = com.fasterxml.jackson.module.kotlin.jacksonObjectMapper()
                     val productosList: List<Map<String, Any>> = objectMapper.readValue(
                         productosJson,
                         object : com.fasterxml.jackson.core.type.TypeReference<List<Map<String, Any>>>() {}
                     )
 
-                    // Por cada producto → crear pedido individual
+                    // Por cada producto del carrito → crear pedido individual
                     productosList.forEach { productoMap ->
                         val productId = (productoMap["id"] as Number).toLong()
                         val cantidad = (productoMap["cantidad"] as Number).toInt()
+                        val precioUnitario = (productoMap["precio"] as Number).toDouble()
 
                         val pedidoDto = PedidoRequestDto(
                             clienteId = userId,
