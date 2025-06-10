@@ -1,6 +1,6 @@
 package dev.javi.rugs_903_back.controllers
 
-import dev.javi.rugs_903_back.dto.PedidoRequestDto
+import dev.javi.rugs_903_back.dto.PedidoCreateRequestDto
 import dev.javi.rugs_903_back.dto.PedidoResponseDto
 import dev.javi.rugs_903_back.mappers.toResponse
 import dev.javi.rugs_903_back.mappers.toResponseList
@@ -30,8 +30,8 @@ class PedidoController(
     }
 
     @PostMapping
-    fun createPedido(@RequestBody dto: PedidoRequestDto): PedidoResponseDto {
-        return pedidoService.save(dto).toResponse()
+    fun createPedido(@RequestBody dto: PedidoCreateRequestDto): PedidoResponseDto {
+        return pedidoService.savePedidoConLineas(dto).toResponse()
     }
 
     @DeleteMapping("/{id}")

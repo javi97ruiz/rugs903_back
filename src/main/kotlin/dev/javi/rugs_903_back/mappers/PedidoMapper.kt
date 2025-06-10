@@ -1,7 +1,7 @@
+// PedidoMapper.kt
 package dev.javi.rugs_903_back.mappers
 
-import dev.javi.rugs_903_back.dto.CustomProductSimpleDto
-import dev.javi.rugs_903_back.dto.PedidoResponseDto
+import dev.javi.rugs_903_back.dto.*
 import dev.javi.rugs_903_back.models.Pedido
 
 fun Pedido.toResponse(): PedidoResponseDto {
@@ -15,22 +15,26 @@ fun Pedido.toResponse(): PedidoResponseDto {
         )
     } ?: emptyList()
 
+    val lineasDto = this.lineas.map { linea ->
+        PedidoLineaResponseDto(
+            productId = linea.producto.id,
+            productName = linea.producto.name,
+            cantidad = linea.cantidad,
+            precioUnitario = linea.precioUnitario,
+            total = linea.total
+        )
+    }
+
     return PedidoResponseDto(
         id = id,
-        clienteId = client?.id ?: 0L,          // ✅ así accedes bien
-        clientName = client?.name + " " + client?.surname,
-        productId = producto?.id ?: 0L,        // ✅ así accedes bien
-        productName = producto?.name ?: "Producto no disponible",
-        cantidad = cantidad,
-        precioUnitario = precioUnitario,
-        total = total,
+        clienteId = client.id,
+        clientName = "${client.name} ${client.surname}",
+        lineas = lineasDto,
         fecha = fecha,
         customProducts = customProductsDtos,
-        estado = estado,
-        )
-
+        estado = estado
+    )
 }
-
 
 fun List<Pedido>.toResponseList(): List<PedidoResponseDto> {
     return this.map { it.toResponse() }

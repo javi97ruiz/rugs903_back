@@ -2,9 +2,9 @@ package dev.javi.rugs_903_back.controllers
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.stripe.model.checkout.Session
 import com.stripe.net.Webhook
-import dev.javi.rugs_903_back.dto.PedidoRequestDto
+import dev.javi.rugs_903_back.dto.PedidoCreateRequestDto
+import dev.javi.rugs_903_back.dto.PedidoLineaRequestDto
 import dev.javi.rugs_903_back.services.PedidoService
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.ResponseEntity
@@ -31,7 +31,7 @@ class StripeWebhookController(
 
             if (event.type == "checkout.session.completed") {
                 // 👇 Hacemos parsing manual del payload
-                val objectMapper = com.fasterxml.jackson.module.kotlin.jacksonObjectMapper()
+                val objectMapper = jacksonObjectMapper()
                 val jsonNode = objectMapper.readTree(payload)
                 val metadataNode = jsonNode["data"]["object"]["metadata"]
 
@@ -45,30 +45,30 @@ class StripeWebhookController(
                     return ResponseEntity.status(400).body("userId nulo en metadata")
                 }
 
-                // Parseamos productosJson
+                // Parseamos productosJson a lista de PedidoLineaRequestDto
                 val productosList: List<Map<String, Any>> = objectMapper.readValue(
                     productosJson,
                     object : com.fasterxml.jackson.core.type.TypeReference<List<Map<String, Any>>>() {}
                 )
 
-                // Por cada producto → crear pedido
-                productosList.forEach { productoMap ->
-                    val productId = (productoMap["id"] as Number).toLong()
-                    val cantidad = (productoMap["cantidad"] as Number).toInt()
-                    val precioUnitario = (productoMap["precio"] as Number).toDouble()
-
-                    val pedidoDto = PedidoRequestDto(
-                        clienteId = userId,
-                        productId = productId,
-                        cantidad = cantidad,
-                        customProductIds = emptyList()
+                val lineasPedido = productosList.map { productoMap ->
+                    PedidoLineaRequestDto(
+                        productId = (productoMap["id"] as Number).toLong(),
+                        cantidad = (productoMap["cantidad"] as Number).toInt()
                     )
-
-                    println("👉 Guardando pedido: $pedidoDto")
-                    pedidoService.save(pedidoDto)
                 }
 
-                return ResponseEntity.ok("Pedidos procesados")
+                val pedidoDto = PedidoCreateRequestDto(
+                    clienteId = userId,
+                    lineas = lineasPedido,
+                    estado = "PAGADO" // o "PENDIENTE", como prefieras
+                )
+
+                println("👉 Guardando pedido con lineas: $pedidoDto")
+
+                pedidoService.savePedidoConLineas(pedidoDto)
+
+                return ResponseEntity.ok("Pedido con líneas procesado")
             }
 
             ResponseEntity.ok("Evento recibido")
@@ -77,5 +77,4 @@ class StripeWebhookController(
             return ResponseEntity.status(400).body("Webhook inválido")
         }
     }
-
 }
