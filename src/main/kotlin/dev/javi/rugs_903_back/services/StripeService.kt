@@ -1,13 +1,19 @@
-// services/StripeService.kt
 package dev.javi.rugs_903_back.services
 
+import com.stripe.Stripe
 import com.stripe.model.checkout.Session
 import com.stripe.param.checkout.SessionCreateParams
 import dev.javi.rugs_903_back.dto.CheckoutItem
+import jakarta.annotation.PostConstruct
 import org.springframework.stereotype.Service
 
 @Service
 class StripeService {
+
+    @PostConstruct
+    fun init() {
+        Stripe.apiKey = System.getenv("STRIPE_SECRET_KEY") // <- la cogeremos de las env vars
+    }
 
     fun createCheckoutSession(
         items: List<CheckoutItem>,
@@ -41,5 +47,4 @@ class StripeService {
         val session = Session.create(params)
         return session.url
     }
-
 }
