@@ -20,7 +20,7 @@ data class Pedido(
     var estado: String = "pendiente", // valores posibles: pendiente, enviado, cancelado
 
     @OneToMany(mappedBy = "pedido", cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
-    val lineas: List<PedidoLinea> = mutableListOf(),
+    val lineas: MutableList<PedidoLinea> = mutableListOf(),
 
     @OneToMany(mappedBy = "pedido", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     val customProducts: List<CustomProduct> = emptyList()

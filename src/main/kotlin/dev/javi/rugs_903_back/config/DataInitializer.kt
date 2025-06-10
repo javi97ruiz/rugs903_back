@@ -150,7 +150,6 @@ class DataInitializer(
                     price = 120.0,
                     quantity = 10,
                     imagen = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5BesV-aGJBJaym5RzAYDRv8LxMS48v4bvaQ&s"
-
                 )
             )
 
@@ -186,30 +185,38 @@ class DataInitializer(
                 )
             )
 
-            // 📦 Pedidos
-            // 📦 Pedidos
-            val pedido1 = pedidoRepo.save(
-                Pedido(
-                    client = cliente1,
-                    producto = prod1,
-                    cantidad = 2,
-                    precioUnitario = prod1.price,
-                    total = prod1.price * 2,
-                    fecha = "2024-06-01"
-                )
+            // 📦 Pedido 1 con líneas
+            val pedido1 = Pedido(
+                client = cliente1,
+                fecha = "2024-06-01",
+                estado = "pagado"
             )
+            val linea1Pedido1 = PedidoLinea(
+                pedido = pedido1,
+                producto = prod1,
+                cantidad = 2,
+                precioUnitario = prod1.price,
+                total = prod1.price * 2
+            )
+            pedido1.lineas += linea1Pedido1
+            pedidoRepo.save(pedido1)
             println("📦 Pedido creado: $pedido1")
 
-            val pedido2 = pedidoRepo.save(
-                Pedido(
-                    client = cliente2,
-                    producto = prod2,
-                    cantidad = 1,
-                    precioUnitario = prod2.price,
-                    total = prod2.price,
-                    fecha = "2024-06-03"
-                )
+            // 📦 Pedido 2 con líneas
+            val pedido2 = Pedido(
+                client = cliente2,
+                fecha = "2024-06-03",
+                estado = "pagado"
             )
+            val linea1Pedido2 = PedidoLinea(
+                pedido = pedido2,
+                producto = prod2,
+                cantidad = 1,
+                precioUnitario = prod2.price,
+                total = prod2.price
+            )
+            pedido2.lineas += linea1Pedido2
+            pedidoRepo.save(pedido2)
             println("📦 Pedido creado: $pedido2")
         }
     }
