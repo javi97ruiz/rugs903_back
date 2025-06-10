@@ -12,7 +12,8 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "pedido_lineas")
-data class PedidoLinea(
+class PedidoLinea(
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
@@ -33,4 +34,20 @@ data class PedidoLinea(
 
     @Column
     val total: Double = 0.0
-)
+
+) {
+
+    override fun toString(): String {
+        return "PedidoLinea(id=$id, cantidad=$cantidad, precioUnitario=$precioUnitario, total=$total)"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is PedidoLinea) return false
+        return id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
+    }
+}
