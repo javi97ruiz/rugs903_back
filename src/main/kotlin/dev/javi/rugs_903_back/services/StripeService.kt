@@ -51,6 +51,8 @@ class StripeService {
             .putMetadata("productos", productosJson)
             .setSuccessUrl(successUrl)
             .setCancelUrl(cancelUrl)
+            .addExpand("payment_intent")  // opcional
+            .addExpand("line_items")      // importante si quieres productos
             .build()
 
         println("👉 Creando sesión de pago en Stripe...")  // LOG extra
