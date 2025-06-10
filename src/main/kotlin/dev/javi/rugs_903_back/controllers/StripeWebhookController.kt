@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
-// StripeWebhookController.kt
 @RestController
 @RequestMapping("/stripe")
 class StripeWebhookController(
@@ -30,47 +29,60 @@ class StripeWebhookController(
         return try {
             val event = Webhook.constructEvent(payload, sigHeader, endpointSecret)
 
+            println("🔔 Recibido evento Stripe: ${event.type}")
+
             if (event.type == "checkout.session.completed") {
-                val session = event.dataObjectDeserializer.`object`.get() as Session
-                println("✅ Pago completado: ${session.id}")
 
-                val userId = session.metadata["userId"]?.toLongOrNull()
-                val productosJson = session.metadata["productos"] ?: "[]"
+                val optionalObject = event.dataObjectDeserializer.`object`
+                if (optionalObject.isPresent) {
+                    val session = optionalObject.get() as Session
+                    println("✅ Pago completado: ${session.id}")
 
-                println("👉 Metadata recibida: userId=$userId, productos=$productosJson")
+                    val userId = session.metadata["userId"]?.toLongOrNull()
+                    val productosJson = session.metadata["productos"] ?: "[]"
 
-                // Parseamos productosJson
-                val objectMapper = com.fasterxml.jackson.module.kotlin.jacksonObjectMapper()
-                val productosList: List<Map<String, Any>> = objectMapper.readValue(
-                    productosJson,
-                    object : com.fasterxml.jackson.core.type.TypeReference<List<Map<String, Any>>>() {}
-                )
+                    println("👉 Metadata recibida: userId=$userId, productos=$productosJson")
 
-                // Por cada producto del carrito → crear pedido individual
-                productosList.forEach { productoMap ->
-                    val productId = (productoMap["id"] as Number).toLong()
-                    val cantidad = (productoMap["cantidad"] as Number).toInt()
-                    val precioUnitario = (productoMap["precio"] as Number).toDouble()
+                    // Validación de userId
+                    if (userId == null) {
+                        println("⚠️ ERROR: userId nulo en metadata, no se puede procesar el pedido.")
+                        return ResponseEntity.status(400).body("userId nulo en metadata")
+                    }
 
-                    val pedidoDto = PedidoRequestDto(
-                        clienteId = userId!!,
-                        productId = productId,
-                        cantidad = cantidad,
-                        customProductIds = emptyList() // Si usas customProductIds los puedes poner aquí
+                    // Parseamos productosJson
+                    val objectMapper = com.fasterxml.jackson.module.kotlin.jacksonObjectMapper()
+                    val productosList: List<Map<String, Any>> = objectMapper.readValue(
+                        productosJson,
+                        object : com.fasterxml.jackson.core.type.TypeReference<List<Map<String, Any>>>() {}
                     )
 
-                    println("👉 Guardando pedido: $pedidoDto")
-                    pedidoService.save(pedidoDto)
-                }
+                    // Por cada producto del carrito → crear pedido individual
+                    productosList.forEach { productoMap ->
+                        val productId = (productoMap["id"] as Number).toLong()
+                        val cantidad = (productoMap["cantidad"] as Number).toInt()
+                        val precioUnitario = (productoMap["precio"] as Number).toDouble()
 
-                return ResponseEntity.ok("Pedidos procesados")
+                        val pedidoDto = PedidoRequestDto(
+                            clienteId = userId,
+                            productId = productId,
+                            cantidad = cantidad,
+                            customProductIds = emptyList() // Si usas customProductIds los puedes poner aquí
+                        )
+
+                        println("👉 Guardando pedido: $pedidoDto")
+                        pedidoService.save(pedidoDto)
+                    }
+
+                    return ResponseEntity.ok("Pedidos procesados")
+                } else {
+                    println("⚠️ WARNING: Event data.object no presente en el evento ${event.type}")
+                }
             }
 
             ResponseEntity.ok("Evento recibido")
         } catch (e: Exception) {
             e.printStackTrace()
-            ResponseEntity.status(400).body("Webhook inválido")
+            return ResponseEntity.status(400).body("Webhook inválido")
         }
     }
-
 }
