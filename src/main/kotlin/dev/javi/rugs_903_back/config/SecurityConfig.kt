@@ -55,6 +55,7 @@ class SecurityConfig(
                     .requestMatchers(HttpMethod.PUT, "/custom-products/**").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.DELETE, "/custom-products/**").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.GET, "/custom-products/**").permitAll()
+                    .requestMatchers("/stripe/webhook").permitAll()
 
                     .anyRequest().authenticated()
             }

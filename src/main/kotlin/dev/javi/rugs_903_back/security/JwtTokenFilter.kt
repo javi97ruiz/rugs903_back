@@ -18,7 +18,7 @@ class JwtTokenFilter(
 
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
         val path = request.servletPath
-        val ignored = path.startsWith("/auth") || path.startsWith("/error") || path == "/"
+        val ignored = path.startsWith("/auth") || path.startsWith("/error") || path == "/" || path.startsWith("/stripe/webhook")
         println("🛑 JwtTokenFilter shouldNotFilter para: $path -> $ignored")
         return ignored
     }
