@@ -1,10 +1,10 @@
 package dev.javi.rugs_903_back.controllers
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.stripe.model.checkout.Session
 import com.stripe.net.Webhook
 import dev.javi.rugs_903_back.dto.PedidoRequestDto
-import dev.javi.rugs_903_back.repositories.ClientRepository
-import dev.javi.rugs_903_back.repositories.ProductRepository
 import dev.javi.rugs_903_back.services.PedidoService
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.ResponseEntity
@@ -16,9 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/stripe")
 class StripeWebhookController(
-    private val pedidoService: PedidoService,
-    private val clientRepository: ClientRepository,
-    private val productRepository: ProductRepository
+    private val pedidoService: PedidoService
 ) {
 
     @PostMapping("/webhook")
@@ -32,16 +30,33 @@ class StripeWebhookController(
             println("🔔 Recibido evento Stripe: ${event.type}")
 
             if (event.type == "checkout.session.completed") {
-
                 val optionalObject = event.dataObjectDeserializer.`object`
+
                 if (optionalObject.isPresent) {
-                    val session = optionalObject.get() as Session
-                    println("✅ Pago completado: ${session.id}")
+                    val rawObject = optionalObject.get()
+                    println("👉 Tipo de object recibido: ${rawObject.javaClass.name}")
 
-                    val userId = session.metadata["userId"]?.toLongOrNull()
-                    val productosJson = session.metadata["productos"] ?: "[]"
+                    val userId: Long?
+                    val productosJson: String
 
-                    println("👉 Metadata recibida: userId=$userId, productos=$productosJson")
+                    if (rawObject is Session) {
+                        val session = rawObject
+                        println("✅ Pago completado: ${session.id}")
+
+                        userId = session.metadata["userId"]?.toLongOrNull()
+                        productosJson = session.metadata["productos"] ?: "[]"
+
+                    } else if (rawObject is Map<*, *>) {
+                        // Fallback → parsear manualmente el Map
+                        val metadata = (rawObject["metadata"] as? Map<String, String>) ?: emptyMap()
+                        userId = metadata["userId"]?.toLongOrNull()
+                        productosJson = metadata["productos"] ?: "[]"
+
+                        println("✅ [Fallback] Metadata recibida manualmente: userId=$userId productos=$productosJson")
+                    } else {
+                        println("⚠️ WARNING: object no es Session ni Map, tipo: ${rawObject.javaClass.name}")
+                        return ResponseEntity.ok("Evento recibido (sin procesar)")
+                    }
 
                     // Validación de userId
                     if (userId == null) {
@@ -50,23 +65,22 @@ class StripeWebhookController(
                     }
 
                     // Parseamos productosJson
-                    val objectMapper = com.fasterxml.jackson.module.kotlin.jacksonObjectMapper()
+                    val objectMapper = jacksonObjectMapper()
                     val productosList: List<Map<String, Any>> = objectMapper.readValue(
                         productosJson,
                         object : com.fasterxml.jackson.core.type.TypeReference<List<Map<String, Any>>>() {}
                     )
 
-                    // Por cada producto del carrito → crear pedido individual
+                    // Por cada producto → crear pedido individual
                     productosList.forEach { productoMap ->
                         val productId = (productoMap["id"] as Number).toLong()
                         val cantidad = (productoMap["cantidad"] as Number).toInt()
-                        val precioUnitario = (productoMap["precio"] as Number).toDouble()
 
                         val pedidoDto = PedidoRequestDto(
                             clienteId = userId,
                             productId = productId,
                             cantidad = cantidad,
-                            customProductIds = emptyList() // Si usas customProductIds los puedes poner aquí
+                            customProductIds = emptyList()
                         )
 
                         println("👉 Guardando pedido: $pedidoDto")
@@ -82,7 +96,7 @@ class StripeWebhookController(
             ResponseEntity.ok("Evento recibido")
         } catch (e: Exception) {
             e.printStackTrace()
-            return ResponseEntity.status(400).body("Webhook inválido")
+            ResponseEntity.status(400).body("Webhook inválido")
         }
     }
 }
