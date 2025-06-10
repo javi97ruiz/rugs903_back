@@ -8,7 +8,8 @@ data class PedidoResponseDto(
     val lineas: List<PedidoLineaResponseDto>,
     val fecha: String,
     val customProducts: List<CustomProductSimpleDto> = emptyList(),
-    val estado: String
+    val estado: String,
+    val totalPedido: Double
 )
 
 data class PedidoLineaResponseDto(

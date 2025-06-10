@@ -32,7 +32,8 @@ fun Pedido.toResponse(): PedidoResponseDto {
         lineas = lineasDto,
         fecha = fecha,
         customProducts = customProductsDtos,
-        estado = estado
+        estado = estado,
+        totalPedido = lineas.sumOf { it.total }
     )
 }
 
