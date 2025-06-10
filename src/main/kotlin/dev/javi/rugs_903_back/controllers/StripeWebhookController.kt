@@ -28,64 +28,54 @@ class StripeWebhookController(
             val event = Webhook.constructEvent(payload, sigHeader, endpointSecret)
 
             println("🔔 Recibido evento Stripe: ${event.type}")
-            println("🔍 RAW PAYLOAD: $payload")
-            println("🔍 EVENT DATA: ${event.data}")
-            println("🔍 EVENT OBJECT: ${event.data.`object`}")
 
             if (event.type == "checkout.session.completed") {
+                // 👇 Hacemos parsing manual del payload
+                val objectMapper = com.fasterxml.jackson.module.kotlin.jacksonObjectMapper()
+                val jsonNode = objectMapper.readTree(payload)
+                val metadataNode = jsonNode["data"]["object"]["metadata"]
 
-                val optionalObject = event.dataObjectDeserializer.`object`
-                println("🔍 optionalObject.isPresent=${optionalObject.isPresent}")
+                val userId = metadataNode?.get("userId")?.asText()?.toLongOrNull()
+                val productosJson = metadataNode?.get("productos")?.asText() ?: "[]"
 
-                if (optionalObject.isPresent) {
-                    val session = optionalObject.get() as Session
-                    println("✅ Pago completado: ${session.id}")
+                println("👉 Metadata recibida (manual parsing): userId=$userId, productos=$productosJson")
 
-                    val userId = session.metadata["userId"]?.toLongOrNull()
-                    val productosJson = session.metadata["productos"] ?: "[]"
+                if (userId == null) {
+                    println("⚠️ ERROR: userId nulo en metadata, no se puede procesar el pedido.")
+                    return ResponseEntity.status(400).body("userId nulo en metadata")
+                }
 
-                    println("👉 Metadata recibida: userId=$userId, productos=$productosJson")
+                // Parseamos productosJson
+                val productosList: List<Map<String, Any>> = objectMapper.readValue(
+                    productosJson,
+                    object : com.fasterxml.jackson.core.type.TypeReference<List<Map<String, Any>>>() {}
+                )
 
-                    // Validación de userId
-                    if (userId == null) {
-                        println("⚠️ ERROR: userId nulo en metadata, no se puede procesar el pedido.")
-                        return ResponseEntity.status(400).body("userId nulo en metadata")
-                    }
+                // Por cada producto → crear pedido
+                productosList.forEach { productoMap ->
+                    val productId = (productoMap["id"] as Number).toLong()
+                    val cantidad = (productoMap["cantidad"] as Number).toInt()
+                    val precioUnitario = (productoMap["precio"] as Number).toDouble()
 
-                    // Parseamos productosJson
-                    val objectMapper = com.fasterxml.jackson.module.kotlin.jacksonObjectMapper()
-                    val productosList: List<Map<String, Any>> = objectMapper.readValue(
-                        productosJson,
-                        object : com.fasterxml.jackson.core.type.TypeReference<List<Map<String, Any>>>() {}
+                    val pedidoDto = PedidoRequestDto(
+                        clienteId = userId,
+                        productId = productId,
+                        cantidad = cantidad,
+                        customProductIds = emptyList()
                     )
 
-                    // Por cada producto del carrito → crear pedido individual
-                    productosList.forEach { productoMap ->
-                        val productId = (productoMap["id"] as Number).toLong()
-                        val cantidad = (productoMap["cantidad"] as Number).toInt()
-                        val precioUnitario = (productoMap["precio"] as Number).toDouble()
-
-                        val pedidoDto = PedidoRequestDto(
-                            clienteId = userId,
-                            productId = productId,
-                            cantidad = cantidad,
-                            customProductIds = emptyList()
-                        )
-
-                        println("👉 Guardando pedido: $pedidoDto")
-                        pedidoService.save(pedidoDto)
-                    }
-
-                    return ResponseEntity.ok("Pedidos procesados")
-                } else {
-                    println("⚠️ WARNING: Event data.object no presente en el evento ${event.type}")
+                    println("👉 Guardando pedido: $pedidoDto")
+                    pedidoService.save(pedidoDto)
                 }
+
+                return ResponseEntity.ok("Pedidos procesados")
             }
 
             ResponseEntity.ok("Evento recibido")
         } catch (e: Exception) {
             e.printStackTrace()
-            ResponseEntity.status(400).body("Webhook inválido")
+            return ResponseEntity.status(400).body("Webhook inválido")
         }
     }
+
 }
