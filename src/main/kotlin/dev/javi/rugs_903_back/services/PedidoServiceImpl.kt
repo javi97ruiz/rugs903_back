@@ -32,14 +32,14 @@ class PedidoServiceImpl(
         val cliente = clientRepository.findById(clienteId)
             .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente no encontrado con ID: $clienteId") }
 
-        return pedidosRepository.findAll().filter { it.client?.id == cliente.id }
+        return pedidosRepository.findAll().filter { it.client.id == cliente.id }
     }
 
     override fun findByUsername(username: String): List<Pedido> {
         val client = clientRepository.findByUserUsername(username)
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No se encontró cliente para el usuario: $username")
 
-        return pedidosRepository.findAll().filter { it.client?.id == client.id }
+        return pedidosRepository.findAll().filter { it.client.id == client.id }
     }
 
     override fun savePedidoConLineas(dto: PedidoCreateRequestDto): Pedido {

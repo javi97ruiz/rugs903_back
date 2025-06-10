@@ -45,4 +45,25 @@ class Client(
     override fun hashCode(): Int {
         return id.hashCode()
     }
+
+    fun copy(
+        id: Long = this.id,
+        address: Direccion = this.address,
+        phoneNumber: String = this.phoneNumber,
+        name: String = this.name,
+        surname: String = this.surname,
+        user: User = this.user,
+        pedidos: List<Pedido> = this.pedidos
+    ): Client {
+        return Client(
+            id = id,
+            address = address,
+            phoneNumber = phoneNumber,
+            name = name,
+            surname = surname,
+            user = user,
+            pedidos = pedidos
+        )
+    }
+
 }
