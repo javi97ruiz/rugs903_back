@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity
 
 
 @RestController
-@RequestMapping("/payment")
+@RequestMapping("/payment")  // ya sin /api, bien
 class StripeController(
     private val stripeService: StripeService
 ) {
@@ -16,10 +16,12 @@ class StripeController(
     @PostMapping("/checkout")
     fun createCheckoutSession(@RequestBody request: CheckoutRequest): ResponseEntity<Map<String, String>> {
         return try {
+            val frontendUrl = System.getenv("FRONTEND_URL") ?: "https://rugs903-front.onrender.com"
+
             val url = stripeService.createCheckoutSession(
                 items = request.items,
-                successUrl = "http://localhost:5173/success",
-                cancelUrl = "http://localhost:5173/cancel"
+                successUrl = "$frontendUrl/success",
+                cancelUrl = "$frontendUrl/cancel"
             )
             ResponseEntity.ok(mapOf("url" to url))
         } catch (e: Exception) {
@@ -27,6 +29,5 @@ class StripeController(
             ResponseEntity.status(500).body(mapOf("error" to (e.message ?: "Unknown error")))
         }
     }
-
-
 }
+
