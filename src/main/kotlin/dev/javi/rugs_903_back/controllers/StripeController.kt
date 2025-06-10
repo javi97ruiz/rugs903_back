@@ -27,52 +27,57 @@ class StripeController(
         val items = body["items"] as List<Map<String, Any>>
         val productos = body["productos"] as String
         val userId = (body["userId"] as Number).toLong()
+        try {
+            val lineItems = items.map {
+                SessionCreateParams.LineItem.builder()
+                    .setQuantity((it["quantity"] as Number).toLong())
+                    .setPriceData(
+                        SessionCreateParams.LineItem.PriceData.builder()
+                            .setCurrency("eur")
+                            .setUnitAmount((it["unitAmount"] as Number).toLong())
+                            .setProductData(
+                                SessionCreateParams.LineItem.PriceData.ProductData.builder()
+                                    .setName(it["productName"] as String)
+                                    .build()
+                            )
+                            .build()
+                    )
+                    .build()
+            }
 
-        val lineItems = items.map {
-            SessionCreateParams.LineItem.builder()
-                .setQuantity((it["quantity"] as Number).toLong())
-                .setPriceData(
-                    SessionCreateParams.LineItem.PriceData.builder()
-                        .setCurrency("eur")
-                        .setUnitAmount((it["unitAmount"] as Number).toLong())
-                        .setProductData(
-                            SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                                .setName(it["productName"] as String)
-                                .build()
-                        )
-                        .build()
-                )
-                .build()
-        }
-
-        val session = Session.create(
-            SessionCreateParams.builder()
-                .addAllLineItem(lineItems)
-                .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl("https://rugs903-front.onrender.com/success")
-                .setCancelUrl("https://rugs903-front.onrender.com/cancel")
-                .build()
-        )
-
-        // 🧠 Aquí parseamos los productos y guardamos los pedidos
-        val objectMapper = com.fasterxml.jackson.module.kotlin.jacksonObjectMapper()
-        val productosList: List<Map<String, Any>> = objectMapper.readValue(
-            productos,
-            object : com.fasterxml.jackson.core.type.TypeReference<List<Map<String, Any>>>() {}
-        )
-
-        productosList.forEach { productoMap ->
-            val pedidoDto = PedidoRequestDto(
-                clienteId = userId,
-                productId = (productoMap["id"] as Number).toLong(),
-                cantidad = (productoMap["cantidad"] as Number).toInt(),
-                customProductIds = emptyList()
+            val session = Session.create(
+                SessionCreateParams.builder()
+                    .addAllLineItem(lineItems)
+                    .setMode(SessionCreateParams.Mode.PAYMENT)
+                    .setSuccessUrl("https://rugs903-front.onrender.com/success")
+                    .setCancelUrl("https://rugs903-front.onrender.com/cancel")
+                    .build()
             )
-            println("📦 Creando pedido: $pedidoDto")
-            pedidoService.save(pedidoDto, estado = "PENDIENTE")
-        }
 
-        return ResponseEntity.ok(mapOf("url" to session.url))
+            // 🧠 Aquí parseamos los productos y guardamos los pedidos
+            val objectMapper = com.fasterxml.jackson.module.kotlin.jacksonObjectMapper()
+            val productosList: List<Map<String, Any>> = objectMapper.readValue(
+                productos,
+                object : com.fasterxml.jackson.core.type.TypeReference<List<Map<String, Any>>>() {}
+            )
+
+            productosList.forEach { productoMap ->
+                val pedidoDto = PedidoRequestDto(
+                    clienteId = userId,
+                    productId = (productoMap["id"] as Number).toLong(),
+                    cantidad = (productoMap["cantidad"] as Number).toInt(),
+                    customProductIds = emptyList()
+                )
+                println("📦 Creando pedido: $pedidoDto")
+                pedidoService.save(pedidoDto, estado = "PENDIENTE")
+            }
+
+            return ResponseEntity.ok(mapOf("url" to session.url))
+        } catch (e: Exception) {
+            println("❌ ERROR al crear pedido:")
+            e.printStackTrace()  // 👈 muy importante para que se vea el error real
+            return ResponseEntity.status(500).body(mapOf("error" to (e.message ?: "Unknown error")))
+        }
     }
 
 }
