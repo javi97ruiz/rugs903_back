@@ -171,7 +171,7 @@ class DataInitializer(
                     name = "Alfombra Personalizada 1",
                     height = 200,
                     length = 150,
-                    imageUrl = "https://via.placeholder.com/200x150",
+                    imageUrl = "https://dripteamprints.com/cdn/shop/files/image_b278c84c-db5b-4945-9d1e-ce21851f22e6.heic?v=1689619722&width=533",
                     price = 400.0
                 )
             )
@@ -182,7 +182,7 @@ class DataInitializer(
                     name = "Alfombra Personalizada 2",
                     height = 100,
                     length = 100,
-                    imageUrl = "https://via.placeholder.com/100x100",
+                    imageUrl = "https://i.ebayimg.com/images/g/eq0AAOSwTnNlUh5a/s-l400.jpg",
                     price = 200.0
                 )
             )
