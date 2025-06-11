@@ -14,12 +14,14 @@ fun User.toResponseDto(): UserResponseDto = UserResponseDto(
 
 fun UserRequestDto.toUser(): User = User(
     username = this.username,
+    email = this.email, // Añadir esta línea
     password = this.password,
     rol = this.rol,
     isActive = true,
     createdAt = LocalDateTime.now(),
     updatedAt = LocalDateTime.now()
 )
+
 
 
 fun List<UserRequestDto>.toUserList(): List<User> {

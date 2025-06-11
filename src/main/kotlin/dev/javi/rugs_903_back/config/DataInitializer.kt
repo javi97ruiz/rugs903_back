@@ -35,6 +35,7 @@ class DataInitializer(
                 User(
                     id = 0,
                     username = "admin",
+                    email = "admin@example.com",
                     password = passwordEncoder.encode("adminpass"),
                     createdAt = LocalDateTime.now(),
                     updatedAt = LocalDateTime.now(),
@@ -47,6 +48,7 @@ class DataInitializer(
                 User(
                     id = 0,
                     username = "javi1",
+                    email = "javi1@example.com",
                     password = passwordEncoder.encode("pass1"),
                     createdAt = LocalDateTime.now(),
                     updatedAt = LocalDateTime.now(),
@@ -58,6 +60,7 @@ class DataInitializer(
                 User(
                     id = 0,
                     username = "javi2",
+                    email = "javi2@example.com",
                     password = passwordEncoder.encode("pass2"),
                     createdAt = LocalDateTime.now(),
                     updatedAt = LocalDateTime.now(),
@@ -69,6 +72,7 @@ class DataInitializer(
                 User(
                     id = 0,
                     username = "javi3",
+                    email = "javi3@example.com",
                     password = passwordEncoder.encode("pass3"),
                     createdAt = LocalDateTime.now(),
                     updatedAt = LocalDateTime.now(),
@@ -77,11 +81,12 @@ class DataInitializer(
                 )
             )
 
-            // 👤 Usuario inactivo
+// 👤 Usuario inactivo
             val user4 = userRepo.save(
                 User(
                     id = 0,
                     username = "javi4",
+                    email = "javi4@example.com",
                     password = passwordEncoder.encode("pass4"),
                     createdAt = LocalDateTime.now(),
                     updatedAt = LocalDateTime.now(),
@@ -89,6 +94,7 @@ class DataInitializer(
                     rol = "user"
                 )
             )
+
 
             // 👥 Clientes con direcciones (en cascada)
             val cliente1 = clientRepo.save(
