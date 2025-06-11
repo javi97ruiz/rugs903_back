@@ -11,7 +11,8 @@ fun Pedido.toResponse(): PedidoResponseDto {
             name = it.name,
             height = it.height,
             length = it.length,
-            imageUrl = it.imageUrl
+            imageUrl = it.imageUrl,
+            price = it.price
         )
     } ?: emptyList()
 
