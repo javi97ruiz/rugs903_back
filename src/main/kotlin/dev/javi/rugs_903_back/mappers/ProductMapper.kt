@@ -10,9 +10,10 @@ fun Product.toResponse(): ProductResponseDto = ProductResponseDto(
     description = this.description,
     price = this.price,
     quantity = this.quantity,
-    imagen = this.imagen // ✅ NUEVO CAMPO
-
+    imagen = this.imagen,
+    isActive = this.isActive
 )
+
 
 
 fun ProductRequestDto.toModel(): Product = Product(

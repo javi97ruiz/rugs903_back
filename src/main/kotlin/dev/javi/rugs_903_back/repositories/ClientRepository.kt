@@ -7,6 +7,8 @@ import java.util.Optional
 interface ClientRepository : JpaRepository<Client, Long> {
     fun findByUserUsername(username: String): Client?
     fun findByUserId(userId: Long): Optional<Client>
+    fun findAllByIsActiveTrue(): List<Client>
+    fun findAllByIsActiveFalse(): List<Client>
 
 
 }

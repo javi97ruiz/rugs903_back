@@ -23,9 +23,10 @@ class ClientController(
 ) {
 
     @GetMapping
-    fun getAllClients(): List<ClientResponseDto> {
-        return clientService.getAll().map { it.toResponseDto() }
+    fun getAllClients(@RequestParam(required = false) active: Boolean?): List<ClientResponseDto> {
+        return clientService.getAll(active).map { it.toResponseDto() }
     }
+
 
     @GetMapping("/{id}")
     fun getClientById(@PathVariable id: Long): ClientResponseDto {
@@ -75,9 +76,10 @@ class ClientController(
     }
 
     @GetMapping("/admin")
-    fun getAllClientsFull(): List<ClientResponseFullDto> {
-        return clientService.getAll().map { it.toFullResponseDto() }
+    fun getAllClientsFull(@RequestParam(required = false) active: Boolean?): List<ClientResponseFullDto> {
+        return clientService.getAll(active).map { it.toFullResponseDto() }
     }
+
 
 
 }

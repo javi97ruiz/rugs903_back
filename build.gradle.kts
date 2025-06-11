@@ -66,6 +66,8 @@ dependencies {
     implementation("org.springframework.security:spring-security-web")
     implementation("org.springframework.security:spring-security-oauth2-resource-server")
     implementation("com.stripe:stripe-java:24.6.0")
+    implementation("jakarta.validation:jakarta.validation-api:3.0.2")
+    implementation("org.hibernate.validator:hibernate-validator:8.0.1.Final")
 
 }
 

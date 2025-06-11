@@ -16,9 +16,14 @@ class UserServiceImpl(
 ): UserService   {
 
 
-    override fun getAll(): List<User> {
-        return userRepository.findAll()
+    override fun getAll(active: Boolean?): List<User> {
+        return when (active) {
+            true -> userRepository.findAllByIsActiveTrue()
+            false -> userRepository.findAllByIsActiveFalse()
+            null -> userRepository.findAll()
+        }
     }
+
 
     override fun getById(id: Long): User? {
         return userRepository.findById(id).orElse(null)
@@ -29,8 +34,11 @@ class UserServiceImpl(
     }
 
     override fun deleteById(id: Long) {
-        userRepository.deleteById(id)
+        val user = userRepository.findById(id).orElseThrow { RuntimeException("User not found") }
+        user.isActive = false
+        userRepository.save(user)
     }
+
 
     override fun update(id: Long, dto: UserUpdateRequestDto): User? {
         val userExistente = userRepository.findById(id).orElse(null) ?: return null
@@ -63,5 +71,7 @@ class UserServiceImpl(
 
         return userRepository.save(updatedUser)
     }
+
+
 
 }

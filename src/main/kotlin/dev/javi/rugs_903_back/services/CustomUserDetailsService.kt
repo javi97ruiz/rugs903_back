@@ -16,6 +16,10 @@ class CustomUserDetailsService(
         val user = userRepository.findByUsername(username)
             ?: throw UsernameNotFoundException("Usuario no encontrado")
 
+        if (!user.isActive) {
+            throw org.springframework.security.authentication.DisabledException("El usuario está inactivo")
+        }
+
         return org.springframework.security.core.userdetails.User(
             user.username,
             user.password,
@@ -23,3 +27,4 @@ class CustomUserDetailsService(
         )
     }
 }
+

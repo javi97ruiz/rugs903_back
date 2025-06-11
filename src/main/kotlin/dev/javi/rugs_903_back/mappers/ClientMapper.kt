@@ -11,8 +11,10 @@ fun Client.toResponseDto() = ClientResponseDto(
     surname = surname,
     phoneNumber = phoneNumber,
     userId = user.id,
-    addressId = address.id
+    addressId = address.id,
+    isActive = isActive
 )
+
 
 fun Client.toFullResponseDto() = ClientResponseFullDto(
     id = id,
@@ -20,8 +22,10 @@ fun Client.toFullResponseDto() = ClientResponseFullDto(
     surname = surname,
     phoneNumber = phoneNumber,
     user = user.toResponseDto(),
-    address = address.toResponseDto()
+    address = address.toResponseDto(),
+    isActive = isActive
 )
+
 
 fun ClientRequestDto.toModel(user: User, direccion: Direccion) = Client(
     id = userId, // o id si estás actualizando

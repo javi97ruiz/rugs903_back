@@ -6,5 +6,7 @@ data class ClientResponseFullDto(
     val surname: String,
     val phoneNumber: String,
     val user: UserResponseDto,
-    val address: DireccionDto
+    val address: DireccionDto,
+    val isActive: Boolean
+
 )

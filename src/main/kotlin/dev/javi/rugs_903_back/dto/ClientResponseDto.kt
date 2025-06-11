@@ -7,6 +7,8 @@ data class ClientResponseDto(
     val surname: String,
     val phoneNumber: String,
     val userId: Long,
-    val addressId: Long
+    val addressId: Long,
+    val isActive: Boolean
+
 )
 

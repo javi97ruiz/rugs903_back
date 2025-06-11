@@ -18,6 +18,9 @@ data class User(
     @Column(nullable = false, unique = true)
     var username: String,
 
+    @Column(nullable = false, unique = true)
+    var email: String, // ➜ nuevo campo email
+
     @Column(nullable = false)
     var password: String,
 
@@ -26,11 +29,11 @@ data class User(
     val createdAt: LocalDateTime,
 
     @LastModifiedDate
-    @Column()
+    @Column
     val updatedAt: LocalDateTime,
 
     @Column
-    val isActive: Boolean = true,
+    var isActive: Boolean = true,
 
     @Column(nullable = false)
     var rol: String // "user" o "admin"

@@ -9,7 +9,13 @@ class ProductServiceImpl(
     private val productRepository: ProductRepository
 ) : ProductService {
 
-    override fun getAll(): List<Product> = productRepository.findAll()
+    override fun getAll(active: Boolean?): List<Product> {
+        return when (active) {
+            true -> productRepository.findAllByIsActiveTrue()
+            false -> productRepository.findAllByIsActiveFalse()
+            null -> productRepository.findAll()
+        }
+    }
 
     override fun getById(id: Long): Product? = productRepository.findById(id).orElse(null)
 
@@ -30,6 +36,9 @@ class ProductServiceImpl(
 
 
     override fun deleteById(id: Long) {
-        productRepository.deleteById(id)
+        val product = productRepository.findById(id).orElseThrow { RuntimeException("Product not found") }
+        product.isActive = false
+        productRepository.save(product)
     }
+
 }

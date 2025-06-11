@@ -5,7 +5,7 @@ import dev.javi.rugs_903_back.dto.UserUpdateRequestDto
 import dev.javi.rugs_903_back.models.User
 
 interface UserService {
-    fun getAll(): List<User>
+    fun getAll(active: Boolean?): List<User>
     fun getById(id: Long): User?
     fun create(user: User): User
     fun update(id: Long, dto: UserUpdateRequestDto): User?

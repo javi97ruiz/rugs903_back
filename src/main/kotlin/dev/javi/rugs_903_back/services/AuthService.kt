@@ -16,14 +16,29 @@ class AuthService(
     private val jwtTokenProvider: JwtTokenProvider
 ) {
     fun login(loginRequest: LoginRequest): JwtResponse {
-        val user = userRepository.findByUsername(loginRequest.username)
-            ?: throw UsernameNotFoundException("Usuario no encontrado")
+        // Intentar buscar por username
+        var user = userRepository.findByUsername(loginRequest.username)
 
-        // Validamos credenciales usando el AuthenticationManager
-        val authToken = UsernamePasswordAuthenticationToken(loginRequest.username, loginRequest.password)
+        // Si no lo encuentra, intentar por email
+        if (user == null) {
+            user = userRepository.findByEmail(loginRequest.username)
+        }
+
+        // Si no existe → 401
+        if (user == null) {
+            throw UsernameNotFoundException("Usuario no encontrado")
+        }
+
+        // Si está inactivo → lanzar excepción para que el controller devuelva 403
+        if (!user.isActive) {
+            throw IllegalStateException("Cuenta desactivada")
+        }
+
+        // Validar credenciales
+        val authToken = UsernamePasswordAuthenticationToken(user.username, loginRequest.password)
         authenticationManager.authenticate(authToken)
 
-        // Si es correcto, generamos el token
+        // Generar token
         val token = jwtTokenProvider.generateToken(user.username, user.rol)
 
         return JwtResponse(
@@ -33,4 +48,5 @@ class AuthService(
             rol = user.rol
         )
     }
+
 }

@@ -18,8 +18,9 @@ class ProductController(
 ) {
 
     @GetMapping
-    fun getAll(): List<ProductResponseDto> =
-        productService.getAll().toResponseList()
+    fun getAll(@RequestParam(required = false) active: Boolean?): List<ProductResponseDto> =
+        productService.getAll(active).toResponseList()
+
 
     @GetMapping("/{id}")
     fun getById(@PathVariable id: Long): ProductResponseDto =

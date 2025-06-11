@@ -77,6 +77,19 @@ class DataInitializer(
                 )
             )
 
+            // 👤 Usuario inactivo
+            val user4 = userRepo.save(
+                User(
+                    id = 0,
+                    username = "javi4",
+                    password = passwordEncoder.encode("pass4"),
+                    createdAt = LocalDateTime.now(),
+                    updatedAt = LocalDateTime.now(),
+                    isActive = false, // Inactivo
+                    rol = "user"
+                )
+            )
+
             // 👥 Clientes con direcciones (en cascada)
             val cliente1 = clientRepo.save(
                 Client(
@@ -95,6 +108,7 @@ class DataInitializer(
                     name = "Javi",
                     surname = "Ruiz",
                     user = user1,
+                    isActive = true,
                     pedidos = emptyList()
                 )
             )
@@ -116,6 +130,7 @@ class DataInitializer(
                     name = "Ana",
                     surname = "Lopez",
                     user = user2,
+                    isActive = true,
                     pedidos = emptyList()
                 )
             )
@@ -137,6 +152,30 @@ class DataInitializer(
                     name = "Luis",
                     surname = "Garcia",
                     user = user3,
+                    isActive = true,
+                    pedidos = emptyList()
+                )
+            )
+
+            // Cliente inactivo
+            val cliente4 = clientRepo.save(
+                Client(
+                    id = 0,
+                    address = Direccion(
+                        id = 0,
+                        calle = "Calle D",
+                        numero = "5",
+                        portal = "4",
+                        piso = "4D",
+                        codigoPostal = "50004",
+                        ciudad = "Zaragoza",
+                        provincia = "Zaragoza"
+                    ),
+                    phoneNumber = "600654321",
+                    name = "Carlos",
+                    surname = "Perez",
+                    user = user4,
+                    isActive = false, // Inactivo
                     pedidos = emptyList()
                 )
             )
@@ -149,7 +188,8 @@ class DataInitializer(
                     description = "Estilo tradicional",
                     price = 120.0,
                     quantity = 10,
-                    imagen = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5BesV-aGJBJaym5RzAYDRv8LxMS48v4bvaQ&s"
+                    imagen = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5BesV-aGJBJaym5RzAYDRv8LxMS48v4bvaQ&s",
+                    isActive = true
                 )
             )
 
@@ -160,7 +200,21 @@ class DataInitializer(
                     description = "Diseño actual",
                     price = 150.0,
                     quantity = 5,
-                    imagen = "https://mycustomrugs.com/cdn/shop/files/Rectangular_KAWS-Inspired_Custom_Tufted_Rug_3.jpg?v=1727332429"
+                    imagen = "https://mycustomrugs.com/cdn/shop/files/Rectangular_KAWS-Inspired_Custom_Tufted_Rug_3.jpg?v=1727332429",
+                    isActive = true
+                )
+            )
+
+            // Producto inactivo → imagen de CustomProduct 1
+            val prod3 = productoRepo.save(
+                Product(
+                    id = 0,
+                    name = "Alfombra Inactiva",
+                    description = "Producto fuera de catálogo",
+                    price = 80.0,
+                    quantity = 0,
+                    imagen = "https://dripteamprints.com/cdn/shop/files/image_b278c84c-db5b-4945-9d1e-ce21851f22e6.heic?v=1689619722&width=533",
+                    isActive = false // Inactivo
                 )
             )
 
@@ -221,5 +275,7 @@ class DataInitializer(
             pedidoRepo.save(pedido2)
             println("📦 Pedido creado: $pedido2")
         }
+        println("🔎 Usuarios: ${userRepo.count()}  | Clientes: ${clientRepo.count()}  | Productos: ${productoRepo.count()}  | CustomProducts: ${customProductRepo.count()}  | Pedidos: ${pedidoRepo.count()}")
+
     }
 }

@@ -8,9 +8,14 @@ import org.springframework.stereotype.Service
 class ClientServiceImpl(
     private val clientRepository: ClientRepository)
     : ClientService  {
-    override fun getAll(): List<Client> {
-        return clientRepository.findAll()
+    override fun getAll(active: Boolean?): List<Client> {
+        return when (active) {
+            true -> clientRepository.findAllByIsActiveTrue()
+            false -> clientRepository.findAllByIsActiveFalse()
+            null -> clientRepository.findAll()
+        }
     }
+
 
     override fun getById(id: Long): Client? {
         return clientRepository.findById(id).orElse(null)
@@ -25,8 +30,11 @@ class ClientServiceImpl(
     }
 
     override fun deleteById(id: Long) {
-        clientRepository.deleteById(id)
+        val client = clientRepository.findById(id).orElseThrow { RuntimeException("Client not found") }
+        client.isActive = false
+        clientRepository.save(client)
     }
+
 
     override fun getByUsername(username: String): Client? {
         return clientRepository.findByUserUsername(username)
