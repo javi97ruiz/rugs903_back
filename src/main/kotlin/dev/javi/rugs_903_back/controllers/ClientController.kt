@@ -73,4 +73,11 @@ class ClientController(
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente no encontrado")
         return client.toFullResponseDto()
     }
+
+    @GetMapping("/admin")
+    fun getAllClientsFull(): List<ClientResponseFullDto> {
+        return clientService.getAll().map { it.toFullResponseDto() }
+    }
+
+
 }
