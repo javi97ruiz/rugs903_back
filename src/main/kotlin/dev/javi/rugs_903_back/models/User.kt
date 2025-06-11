@@ -16,10 +16,10 @@ data class User(
     val id: Long = 0,
 
     @Column(nullable = false, unique = true)
-    val username: String,
+    var username: String,
 
     @Column(nullable = false)
-    val password: String,
+    var password: String,
 
     @CreatedDate
     @Column(updatable = false)
@@ -33,6 +33,6 @@ data class User(
     val isActive: Boolean = true,
 
     @Column(nullable = false)
-    val rol: String // "user" o "admin"
+    var rol: String // "user" o "admin"
 
 )

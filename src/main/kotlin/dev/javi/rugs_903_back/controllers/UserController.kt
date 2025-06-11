@@ -2,6 +2,7 @@ package dev.javi.rugs_903_back.controllers
 import dev.javi.rugs_903_back.dto.UserRequestDto
 import dev.javi.rugs_903_back.dto.UserResponseDto
 import dev.javi.rugs_903_back.dto.UserUpdateRequest
+import dev.javi.rugs_903_back.dto.UserUpdateRequestDto
 import dev.javi.rugs_903_back.mappers.toResponseDto
 import dev.javi.rugs_903_back.mappers.toUser
 import dev.javi.rugs_903_back.services.UserService
@@ -55,9 +56,10 @@ class UserController(
         userService.create(dto.toUser()).toResponseDto()
 
     @PutMapping("/{id}")
-    fun updateUser(@PathVariable id: Long, @RequestBody dto: UserRequestDto): UserResponseDto =
-        userService.update(id, dto.toUser())?.toResponseDto()
+    fun updateUser(@PathVariable id: Long, @RequestBody dto: UserUpdateRequestDto): UserResponseDto =
+        userService.update(id, dto)?.toResponseDto()
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+
 
     @DeleteMapping("/{id}")
     fun deleteUser(@PathVariable id: Long) {

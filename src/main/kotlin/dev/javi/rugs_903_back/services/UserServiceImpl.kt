@@ -1,6 +1,7 @@
 package dev.javi.rugs_903_back.services
 
 import dev.javi.rugs_903_back.dto.UserUpdateRequest
+import dev.javi.rugs_903_back.dto.UserUpdateRequestDto
 import dev.javi.rugs_903_back.models.User
 import dev.javi.rugs_903_back.repositories.UserRepository
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -31,12 +32,19 @@ class UserServiceImpl(
         userRepository.deleteById(id)
     }
 
-    override fun update(id: Long, user: User): User? {
-        return userRepository.findById(id).map { existingUser ->
-            val updatedUser = existingUser.copy(username = user.username, password = user.password)
-            userRepository.save(updatedUser)
-        }.orElse(null)
+    override fun update(id: Long, dto: UserUpdateRequestDto): User? {
+        val userExistente = userRepository.findById(id).orElse(null) ?: return null
+
+        if (dto.password != null && dto.password.isNotBlank()) {
+            userExistente.password = passwordEncoder.encode(dto.password)
+        }
+
+        userExistente.username = dto.username
+        userExistente.rol = dto.rol
+
+        return userRepository.save(userExistente)
     }
+
 
     override fun getByUsername(username: String): User? {
         return userRepository.findByUsername(username)
