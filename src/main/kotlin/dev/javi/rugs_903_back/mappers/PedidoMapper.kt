@@ -1,43 +1,44 @@
-// PedidoMapper.kt
 package dev.javi.rugs_903_back.mappers
 
 import dev.javi.rugs_903_back.dto.*
 import dev.javi.rugs_903_back.models.Pedido
 
 fun Pedido.toResponse(): PedidoResponseDto {
-    val customProductsDtos = this.customProducts?.map {
-        CustomProductSimpleDto(
-            id = it.id,
-            name = it.name,
-            height = it.height,
-            length = it.length,
-            imageUrl = it.imageUrl,
-            price = it.price
-        )
-    } ?: emptyList()
-
-    val lineasDto = this.lineas.map { linea ->
-        PedidoLineaResponseDto(
-            productId = linea.producto.id,
-            productName = linea.producto.name,
-            cantidad = linea.cantidad,
-            precioUnitario = linea.precioUnitario,
-            total = linea.total
-        )
-    }
+    val totalProductos = this.lineas.sumOf { it.total }
+    val totalCustomProducts = this.customProducts.sumOf { it.price }
+    val totalPedido = totalProductos + totalCustomProducts
 
     return PedidoResponseDto(
-        id = id,
-        clienteId = client.id,
-        clientName = "${client.name} ${client.surname}",
-        lineas = lineasDto,
-        fecha = fecha,
-        customProducts = customProductsDtos,
-        estado = estado,
-        totalPedido = lineas.sumOf { it.total }
+        id = this.id,
+        clienteId = this.client.id,
+        clientName = "${this.client.name} ${this.client.surname}",
+        lineas = this.lineas.map { it.toResponse() },
+        fecha = this.fecha,
+        customProducts = this.customProducts.map { it.toSimpleDto() },
+        estado = this.estado,
+        totalPedido = totalPedido
     )
 }
 
-fun List<Pedido>.toResponseList(): List<PedidoResponseDto> {
-    return this.map { it.toResponse() }
-}
+fun Pedido.toResponseList(): PedidoResponseDto = this.toResponse()
+
+// Mappers auxiliares:
+
+fun dev.javi.rugs_903_back.models.PedidoLinea.toResponse(): PedidoLineaResponseDto =
+    PedidoLineaResponseDto(
+        productId = this.producto.id,
+        productName = this.producto.name,
+        cantidad = this.cantidad,
+        precioUnitario = this.precioUnitario,
+        total = this.total
+    )
+
+fun dev.javi.rugs_903_back.models.CustomProduct.toSimpleDto(): CustomProductSimpleDto =
+    CustomProductSimpleDto(
+        id = this.id,
+        name = this.name,
+        height = this.height,
+        length = this.length,
+        imageUrl = this.imageUrl,
+        price = this.price
+    )
