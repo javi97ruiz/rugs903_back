@@ -5,5 +5,6 @@ data class CustomProductRequestDto(
     val name: String,
     val height: Int,
     val length: Int,
-    val imageUrl: String
+    val imageUrl: String,
+    val price: Double
 )

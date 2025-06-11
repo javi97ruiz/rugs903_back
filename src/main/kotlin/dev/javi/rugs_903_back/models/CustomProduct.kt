@@ -12,6 +12,8 @@ data class CustomProduct (
     val length: Int,
     @Column(columnDefinition = "text")
     val imageUrl: String,
+    @Column(nullable = false)
+    val price: Double,    // 👈 AÑADIR ESTE CAMPO
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pedido_id", nullable = true)
     val pedido: Pedido? = null

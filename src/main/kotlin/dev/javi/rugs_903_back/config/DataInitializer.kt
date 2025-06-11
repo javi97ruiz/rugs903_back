@@ -171,7 +171,8 @@ class DataInitializer(
                     name = "Alfombra Personalizada 1",
                     height = 200,
                     length = 150,
-                    imageUrl = "https://via.placeholder.com/200x150"
+                    imageUrl = "https://via.placeholder.com/200x150",
+                    price = 400.0
                 )
             )
 
@@ -181,7 +182,8 @@ class DataInitializer(
                     name = "Alfombra Personalizada 2",
                     height = 100,
                     length = 100,
-                    imageUrl = "https://via.placeholder.com/100x100"
+                    imageUrl = "https://via.placeholder.com/100x100",
+                    price = 200.0
                 )
             )
 
