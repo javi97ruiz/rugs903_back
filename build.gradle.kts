@@ -67,12 +67,6 @@ dependencies {
     implementation("org.springframework.security:spring-security-oauth2-resource-server")
     implementation("com.stripe:stripe-java:24.6.0")
 
-    // https://mvnrepository.com/artifact/com.cloudinary/cloudinary-http44
-    implementation("com.cloudinary:cloudinary-http44:1.39.0")
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.2.1")
-
-
-
 }
 
 kotlin {

@@ -1,14 +1,12 @@
 package dev.javi.rugs_903_back.services
 
-import com.cloudinary.Cloudinary
 import dev.javi.rugs_903_back.models.CustomProduct
 import dev.javi.rugs_903_back.repositories.CustomProductRepository
 import org.springframework.stereotype.Service
 
 @Service
 class CustomProductServiceImpl(
-    private val repository: CustomProductRepository,
-    private val cloudinary: Cloudinary
+    private val repository: CustomProductRepository
 ) : CustomProductService {
 
     override fun findAll(): List<CustomProduct> = repository.findAll()
