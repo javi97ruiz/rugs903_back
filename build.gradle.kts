@@ -71,6 +71,8 @@ dependencies {
     implementation("com.cloudinary:cloudinary-http44:1.39.0")
 
     implementation("org.apache.httpcomponents.client5:httpclient5:5.3.1")
+    implementation("org.apache.httpcomponents.client5:httpclient5-tls:5.3.1")
+
 
 
 }
