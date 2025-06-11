@@ -3,7 +3,7 @@ package dev.javi.rugs_903_back.dto
 
 data class PedidoCreateRequestDto(
     val clienteId: Long,
-    val estado: String = "pendiente",
+    val estado: String = "Pendiente",
     val lineas: List<PedidoLineaRequestDto>,
     val customProductIds: List<Long>? = emptyList()
 )

@@ -191,7 +191,7 @@ class DataInitializer(
             val pedido1 = Pedido(
                 client = cliente1,
                 fecha = "2024-06-01",
-                estado = "pagado"
+                estado = "Pagado"
             )
             val linea1Pedido1 = PedidoLinea(
                 pedido = pedido1,
@@ -208,7 +208,7 @@ class DataInitializer(
             val pedido2 = Pedido(
                 client = cliente2,
                 fecha = "2024-06-03",
-                estado = "pagado"
+                estado = "Pagado"
             )
             val linea1Pedido2 = PedidoLinea(
                 pedido = pedido2,

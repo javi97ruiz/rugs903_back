@@ -74,7 +74,7 @@ class StripeWebhookController(
                 val pedidoDto = PedidoCreateRequestDto(
                     clienteId = userId,
                     lineas = lineasPedido,
-                    estado = "PAGADO",
+                    estado = "Pagado",
                     customProductIds = customProductIds
                 )
 
