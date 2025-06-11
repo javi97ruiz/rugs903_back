@@ -69,8 +69,9 @@ dependencies {
 
     // https://mvnrepository.com/artifact/com.cloudinary/cloudinary-http44
     implementation("com.cloudinary:cloudinary-http44:1.39.0")
-    // https://mvnrepository.com/artifact/com.cloudinary/cloudinary-core
-    implementation("com.cloudinary:cloudinary-core:2.2.0")
+
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.3.1")
+
 
 }
 
