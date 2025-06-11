@@ -20,7 +20,7 @@ fun Pedido.toResponse(): PedidoResponseDto {
     )
 }
 
-fun Pedido.toResponseList(): PedidoResponseDto = this.toResponse()
+fun List<Pedido>.toResponseList(): List<PedidoResponseDto> = this.map { it.toResponse() }
 
 // Mappers auxiliares:
 
