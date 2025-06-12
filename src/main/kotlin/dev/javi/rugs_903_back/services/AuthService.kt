@@ -16,37 +16,49 @@ class AuthService(
     private val jwtTokenProvider: JwtTokenProvider
 ) {
     fun login(loginRequest: LoginRequest): JwtResponse {
-        // Intentar buscar por username
-        var user = userRepository.findByUsername(loginRequest.username)
+        try {
+            // Intentar buscar por username
+            var user = userRepository.findByUsername(loginRequest.username)
 
-        // Si no lo encuentra, intentar por email
-        if (user == null) {
-            user = userRepository.findByEmail(loginRequest.username)
+            // Si no lo encuentra, intentar por email
+            if (user == null) {
+                user = userRepository.findByEmail(loginRequest.username)
+            }
+
+            // Si no existe → 401
+            if (user == null) {
+                throw UsernameNotFoundException("Usuario no encontrado")
+            }
+
+            // Si está inactivo → lanzar excepción
+            if (!user.isActive) {
+                throw IllegalStateException("Cuenta desactivada")
+            }
+
+            // Validar credenciales
+            val authToken = UsernamePasswordAuthenticationToken(user.username, loginRequest.password)
+            authenticationManager.authenticate(authToken)
+
+            // Generar token
+            val token = jwtTokenProvider.generateToken(user.username, user.rol)
+
+            return JwtResponse(
+                token = token,
+                id = user.id,
+                username = user.username,
+                rol = user.rol
+            )
+        } catch (ex: UsernameNotFoundException) {
+            println("❌ Error de login: ${ex.message}")
+            throw ex // tu controller debería mapear UsernameNotFoundException → 401
+        } catch (ex: IllegalStateException) {
+            println("❌ Cuenta desactivada: ${ex.message}")
+            throw ex // tu controller debería mapear IllegalStateException → 403
+        } catch (ex: Exception) {
+            println("❌ Error inesperado en login: ${ex.message}")
+            throw RuntimeException("Error al intentar autenticarse", ex)
         }
-
-        // Si no existe → 401
-        if (user == null) {
-            throw UsernameNotFoundException("Usuario no encontrado")
-        }
-
-        // Si está inactivo → lanzar excepción para que el controller devuelva 403
-        if (!user.isActive) {
-            throw IllegalStateException("Cuenta desactivada")
-        }
-
-        // Validar credenciales
-        val authToken = UsernamePasswordAuthenticationToken(user.username, loginRequest.password)
-        authenticationManager.authenticate(authToken)
-
-        // Generar token
-        val token = jwtTokenProvider.generateToken(user.username, user.rol)
-
-        return JwtResponse(
-            token = token,
-            id = user.id,
-            username = user.username,
-            rol = user.rol
-        )
     }
+
 
 }
