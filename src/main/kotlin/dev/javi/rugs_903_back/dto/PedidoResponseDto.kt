@@ -16,6 +16,7 @@ data class PedidoLineaResponseDto(
     val productId: Long,
     val productName: String,
     val cantidad: Int,
+    val productImage: String,
     val precioUnitario: Double,
     val total: Double
 )

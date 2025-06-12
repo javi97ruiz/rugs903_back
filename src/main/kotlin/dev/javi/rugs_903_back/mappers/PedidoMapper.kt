@@ -1,7 +1,9 @@
 package dev.javi.rugs_903_back.mappers
 
 import dev.javi.rugs_903_back.dto.*
+import dev.javi.rugs_903_back.models.CustomProduct
 import dev.javi.rugs_903_back.models.Pedido
+import dev.javi.rugs_903_back.models.PedidoLinea
 
 fun Pedido.toResponse(): PedidoResponseDto {
     val totalProductos = this.lineas.sumOf { it.total }
@@ -24,16 +26,17 @@ fun List<Pedido>.toResponseList(): List<PedidoResponseDto> = this.map { it.toRes
 
 // Mappers auxiliares:
 
-fun dev.javi.rugs_903_back.models.PedidoLinea.toResponse(): PedidoLineaResponseDto =
+fun PedidoLinea.toResponse(): PedidoLineaResponseDto =
     PedidoLineaResponseDto(
         productId = this.producto.id,
         productName = this.producto.name,
         cantidad = this.cantidad,
         precioUnitario = this.precioUnitario,
-        total = this.total
+        total = this.total,
+        productImage = this.producto.imagen
     )
 
-fun dev.javi.rugs_903_back.models.CustomProduct.toSimpleDto(): CustomProductSimpleDto =
+fun CustomProduct.toSimpleDto(): CustomProductSimpleDto =
     CustomProductSimpleDto(
         id = this.id,
         name = this.name,
