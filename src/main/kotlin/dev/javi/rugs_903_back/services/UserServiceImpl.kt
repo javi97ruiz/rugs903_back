@@ -3,6 +3,7 @@ package dev.javi.rugs_903_back.services
 import dev.javi.rugs_903_back.dto.UserUpdateRequest
 import dev.javi.rugs_903_back.dto.UserUpdateRequestDto
 import dev.javi.rugs_903_back.models.User
+import dev.javi.rugs_903_back.repositories.ClientRepository
 import dev.javi.rugs_903_back.repositories.UserRepository
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -12,7 +13,8 @@ import java.time.LocalDateTime
 @Service
 class UserServiceImpl(
     private val userRepository: UserRepository,
-    private val passwordEncoder: PasswordEncoder
+    private val passwordEncoder: PasswordEncoder,
+    private val clientRepository: ClientRepository
 ): UserService   {
 
 
@@ -37,7 +39,15 @@ class UserServiceImpl(
         val user = userRepository.findById(id).orElseThrow { RuntimeException("User not found") }
         user.isActive = false
         userRepository.save(user)
+
+        // También desactivar el Client asociado (si existe)
+        val client = clientRepository.findByUserId(user.id)
+        if (client != null) {
+            client.get().isActive = false
+            clientRepository.save(client.get())
+        }
     }
+
 
 
     override fun update(id: Long, dto: UserUpdateRequestDto): User? {
