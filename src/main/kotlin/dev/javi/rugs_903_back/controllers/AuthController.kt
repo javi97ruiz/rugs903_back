@@ -100,7 +100,10 @@ class AuthController(
 
 
     @GetMapping("/me")
-    fun getCurrentUser(principal: Principal): ResponseEntity<JwtResponse> {
+    fun getCurrentUser(principal: Principal?): ResponseEntity<JwtResponse> {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+        }
         val user = userRepository.findByUsername(principal.name)
             ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
 

@@ -43,4 +43,23 @@ class Pedido(
     override fun hashCode(): Int {
         return id.hashCode()
     }
+
+    fun copy(
+        id: Long = this.id,
+        client: Client = this.client,
+        fecha: String = this.fecha,
+        estado: String = this.estado,
+        lineas: MutableList<PedidoLinea> = this.lineas,
+        customProducts: List<CustomProduct> = this.customProducts
+    ): Pedido {
+        return Pedido(
+            id = id,
+            client = client,
+            fecha = fecha,
+            estado = estado,
+            lineas = lineas,
+            customProducts = customProducts
+        )
+    }
+
 }

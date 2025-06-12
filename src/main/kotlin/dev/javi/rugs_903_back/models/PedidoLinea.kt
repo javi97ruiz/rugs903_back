@@ -20,7 +20,7 @@ class PedidoLinea(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pedido_id")
-    val pedido: Pedido,
+    var pedido: Pedido,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")

@@ -4,6 +4,7 @@ plugins {
     id("org.springframework.boot") version "3.4.2"
     id("io.spring.dependency-management") version "1.1.7"
     kotlin("plugin.jpa") version "1.9.25"
+    id("jacoco")
 }
 
 group = "dev.javi"
@@ -13,6 +14,9 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
+}
+jacoco {
+    toolVersion = "0.8.11" // versión estable actual
 }
 
 repositories {
@@ -68,6 +72,9 @@ dependencies {
     implementation("com.stripe:stripe-java:24.6.0")
     implementation("jakarta.validation:jakarta.validation-api:3.0.2")
     implementation("org.hibernate.validator:hibernate-validator:8.0.1.Final")
+    testImplementation("org.springframework.security:spring-security-test")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
+    testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
 }
 
@@ -89,4 +96,29 @@ tasks.withType<Test> {
 
 tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
     archiveFileName.set("app.jar") // nombre que Render puede usar
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test) // se asegura de correr los tests antes del reporte
+
+    reports {
+        xml.required.set(true) // para CI (opcional)
+        html.required.set(true) // para ver en navegador
+        classDirectories.setFrom(
+            files(classDirectories.files.map {
+                fileTree(it) {
+                    exclude(
+
+                        "**/models/**", // excluye paquetes model
+                        "**/dto/**", // excluye paquetes dto
+                        "**/security/**",
+                        "**/repositories/**",
+                        "**/config/**", // configuración
+                        "**/*Application*", // clase main
+                        "**/exceptions/**" // excepciones, si tienes
+                    )
+                }
+            })
+        )
+    }
 }
